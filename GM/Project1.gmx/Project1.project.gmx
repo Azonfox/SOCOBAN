@@ -7,8 +7,8 @@
   <sounds name="sound"/>
   <sprites name="sprites">
     <sprite>sprites\sp_box</sprite>
-    <sprite>sprites\sp_wall</sprite>
     <sprite>sprites\sp_man</sprite>
+    <sprite>sprites\sp_wall</sprite>
     <sprite>sprites\sp_place</sprite>
     <sprite>sprites\sp_txt_start</sprite>
     <sprite>sprites\sp_dura</sprite>
@@ -27,6 +27,9 @@
     <object>objects\RestartGame</object>
     <object>objects\o_dura</object>
   </objects>
+  <timelines name="timelines">
+    <timeline>timelines\timeline0</timeline>
+  </timelines>
   <rooms name="rooms">
     <room>rooms\game</room>
   </rooms>
