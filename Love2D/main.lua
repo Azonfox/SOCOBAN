@@ -22,6 +22,8 @@ function love.load(arg)
   
   bungee_font = love.graphics.newFont("font.ttf", 30 )  
   image = love.graphics.newImage("Hero.png")
+  image2 = love.graphics.newImage("pol.png")
+  image3 = love.graphics.newImage("bad.png")  
   
   enemies = {}
   for i=0,4 do
@@ -109,14 +111,14 @@ function love.draw()
 
   -- let's draw some ground
   love.graphics.setColor(255,255,0,255)
-  love.graphics.rectangle("fill", 0, 370, 600, 20)
+  --love.graphics.rectangle("fill", 0, 370, 600, 20)
+  love.graphics.draw(image2,1, 360)
+
 
   -- let's draw our hero
   love.graphics.setColor(0,255,0,255)
   love.graphics.rectangle("fill", hero.x, hero.y, hero.width, hero.height)
-  love.graphics.draw(image,hero.x-31, hero.y)
-
-
+  love.graphics.draw(image,hero.x-30, hero.y)
 
   -- let's draw our heros shots
   love.graphics.setColor(255,0,0,255)
@@ -125,9 +127,10 @@ function love.draw()
   end
 
   -- let's draw our enemies
-  love.graphics.setColor(0,255,255,255)
+  love.graphics.setColor(255,255,0,255)
   for i,v in ipairs(enemies) do
-    love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
+    --love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
+    love.graphics.draw(image3,v.x-12, v.y)
   end
 end
 
