@@ -1,6 +1,7 @@
 function love.conf(c)
-  c.title = "Shooter"
+  c.title = "Socoban"
   local window = c.screen or c.window -- love 0.9 renamed "screen" to "window"
-  window.width = 600
-  window.height = 400
+  window.width = 608
+  window.height = 512
+
 end

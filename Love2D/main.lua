@@ -1,151 +1,34 @@
 -- from [LÖVE tutorial, part 2](http://www.headchant.com/2010/12/31/love2d-%E2%80%93-tutorial-part-2-pew-pew/)
 
 function love.load(arg)
-  if arg and arg[#arg] == "-debug" then require("mobdebug").start() end
-  hero = {} -- new table for the hero
-  hero.x = 300 -- x,y coordinates of the hero
-  hero.y = 300
-  hero.width = 10
-  hero.height = 10
-  hero.speed = 150
+ mARR={
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,0,0,1,0,0,0,0,0,0,0,0,0,0,
+  0,0,1,1,1,0,0,3,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,3,0,3,0,1,0,0,0,0,0,0,0,0,0,
+  1,1,1,0,1,0,1,1,0,1,0,0,0,1,1,1,1,1,1,1,0,0,0,1,0,1,1,0,1,1,1,1,1,0,0,2,2,1,
+  1,0,3,0,0,3,0,0,0,0,0,0,0,0,0,0,2,2,1,1,1,1,1,1,0,1,1,1,0,1,5,1,1,0,0,2,2,1,
+  0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+} 
   
-  --hero = {} -- new table for the hero
-  --hero.x = 300 -- x,y coordinates of the hero
-  --hero.y = 355
-  --hero.width = 30
-  --hero.height = 15
-  --hero.speed = 150
+  image2 = love.graphics.newImage("bad.png") 
   
-  
-  
-  hero.shots = {} -- holds our fired shots
-  
-  bungee_font = love.graphics.newFont("font.ttf", 30 )  
-  image = love.graphics.newImage("Hero.png")
-  image2 = love.graphics.newImage("pol.png")
-  image3 = love.graphics.newImage("bad.png")  
-  
-  enemies = {}
-  for i=0,4 do
-    local enemy = {}
-    enemy.width = 40
-    enemy.height = 20
-    enemy.x = i * (enemy.width + 60) + 100
-    enemy.y = enemy.height + 50
-    table.insert(enemies, enemy)
+local adr=0
+gamepad={}
+for mxi=1, 16 do
+  gamepad[mxi]={}
+  for myi=1,19 do
+      adr=adr+1
+      gamepad[mxi][myi]=mARR[adr]
   end
-end
-
-function love.keyreleased(key)
-  -- in v0.9.2 and earlier space is represented by the actual space character ' ', so check for both
-  if (key == " " or key == "space") then
-    shoot()
-  end
-end
-
-function love.update(dt)
-  -- keyboard actions for our hero
-  if love.keyboard.isDown("left") then
-    if hero.x>31 then
-        hero.x = hero.x - hero.speed*dt
-    end
-  elseif love.keyboard.isDown("right") then
-    if hero.x<600-32 then
-       hero.x = hero.x + hero.speed*dt
-    end
-  end
-
-  local remEnemy = {}
-  local remShot = {}
-
-  -- update the shots
-  for i,v in ipairs(hero.shots) do
-    -- move them up up up
-    v.y = v.y - dt*2 * 100
-
-    -- mark shots that are not visible for removal
-    if v.y < 0 then
-      table.insert(remShot, i)
-    end
-
-    -- check for collision with enemies
-    for ii,vv in ipairs(enemies) do
-      if CheckCollision(v.x,v.y,2,5,vv.x,vv.y,vv.width,vv.height) then
-        -- mark that enemy for removal
-        table.insert(remEnemy, ii)
-        -- mark the shot to be removed
-        table.insert(remShot, i)
-      end
-    end
-  end
-
-  -- remove the marked enemies
-  for i,v in ipairs(remEnemy) do
-    table.remove(enemies, v)
-  end
-
-  for i,v in ipairs(remShot) do
-    table.remove(hero.shots, v)
-  end
-
-  -- update those evil enemies
-  for i,v in ipairs(enemies) do
-    -- let them fall down slowly
-    v.y = v.y + dt
-
-    -- check for collision with ground
-    if v.y > 465 then
-      -- you loose!!!
-    end
-  end
+ end 
 end
 
 function love.draw()
-  -- Печать херни
-   love.graphics.setFont( bungee_font )
-    love.graphics.setColor(255,0,0,255)
-    love.graphics.print("A Z O N F O X", 200, 20)
-  
-  -- let's draw a background
-  love.graphics.setColor(255,255,255,255)
-
-  -- let's draw some ground
-  love.graphics.setColor(255,255,0,255)
-  --love.graphics.rectangle("fill", 0, 370, 600, 20)
-  love.graphics.draw(image2,1, 360)
-
-
-  -- let's draw our hero
-  love.graphics.setColor(0,255,0,255)
-  love.graphics.rectangle("fill", hero.x, hero.y, hero.width, hero.height)
-  love.graphics.draw(image,hero.x-30, hero.y)
-
-  -- let's draw our heros shots
-  love.graphics.setColor(255,0,0,255)
-  for i,v in ipairs(hero.shots) do
-    love.graphics.circle("fill", v.x, v.y, 5)
-  end
-
-  -- let's draw our enemies
-  love.graphics.setColor(255,255,0,255)
-  for i,v in ipairs(enemies) do
-    --love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
-    love.graphics.draw(image3,v.x-12, v.y)
-  end
-end
-
-function shoot()
-  if #hero.shots >= 5 then return end
-  local shot = {}
-  shot.x = hero.x+hero.width/2
-  shot.y = hero.y
-  table.insert(hero.shots, shot)
-end
-
--- Collision detection function.
--- Checks if a and b overlap.
--- w and h mean width and height.
-function CheckCollision(ax1,ay1,aw,ah, bx1,by1,bw,bh)
-  local ax2,ay2,bx2,by2 = ax1 + aw, ay1 + ah, bx1 + bw, by1 + bh
-  return ax1 < bx2 and ax2 > bx1 and ay1 < by2 and ay2 > by1
+    for mxi=1, 16 do
+      for myi=1,19 do
+       if(gamepad[mxi][myi]==1) then love.graphics.draw(image2,mxi*32,myi*32) end
+      end
+    end 
 end
