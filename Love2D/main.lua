@@ -15,7 +15,7 @@ function love.load()
   --Координаты игрока
   manx=1 
   many=1
-  mygamelevel=1
+  mygamelevel=17  -- для хотьбы вправо
   
     bungee_font = love.graphics.newFont("font.ttf", 30 )  
   
@@ -78,11 +78,11 @@ function love.draw()
     end
   end 
   
-      -- Печать херни
+      -- Печать номера уровня
   love.graphics.setFont( bungee_font )
-  love.graphics.setColor(0,0,255,255)
+  love.graphics.setColor(0,0,255,255) -- голубой
   love.graphics.print(mygamelevel, 3, 3)
-    -- let's draw a background
+  -- Восстановливаем фон
   love.graphics.setColor(255,255,255,255)
   
 end
