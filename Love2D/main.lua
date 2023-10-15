@@ -42,7 +42,7 @@ function love.load()
   many=1
   mygamelevel=1  -- начальный уровень
   
-    bungee_font = love.graphics.newFont("font.ttf", 30 )  
+  bungee_font = love.graphics.newFont("font.ttf", 30 )  
   
   -- Картинки
   imageGround= love.graphics.newImage("Ground.png") 
@@ -53,10 +53,12 @@ function love.load()
   imageManX= love.graphics.newImage("ManX.png") 
   imageBoxOk= love.graphics.newImage("BoxOk.png") 
   
-  gamereset(mygamelevel)
+  gamereset(mygamelevel) -- Выставляем уровень
   
 end
 
+
+-- Выставляем уровень
 function gamereset(gamelevel)
   levelOK=0 
 --Формирование текущего уровня gamepad
@@ -74,6 +76,8 @@ gamepad={}
  end 
 end
 
+
+-- Рабочий процесс
 function love.update(dt)
   -- Обработка движения
   function love.keyreleased(key)
@@ -92,19 +96,23 @@ function love.update(dt)
   levelOK=1
   for myi=1, 16 do
    for mxi=1,19 do
-    if(gamepad[myi][mxi]==3) then levelOK=0 end -- сли еще есть, то сбросим флаг
+    if(gamepad[myi][mxi]==3) then levelOK=0 bbb=0 end -- если еще есть, то сбросим флаг
    end
   end 
     -- Если выигрыш - флаг установлен, то
-   if(levelOK==1) then 
-    -- переходим на следующий уровень, до 50
-    -- лучше с задержкой - - пока нет
-    --[[
-    if (mygamelevel<50) then  
-      mygamelevel=mygamelevel+1
-      gamereset(mygamelevel) 
-    end 
-    --]]
+    if(levelOK==1) then bbb=bbb+1 end
+  
+ if(bbb==3) then 
+    local button = {"Далее2","Сначала1"}
+    love.graphics.setColor(255,0,0,255)
+    aaa=love.window.showMessageBox("Ура!","Вы выиграли",button)
+    levelOK=0 
+    if aaa==1 then  mygamelevel=mygamelevel+1 end
+    if aaa==2 then  mygamelevel=mygamelevel   end     
+      if (mygamelevel<50) then  
+        gamereset(mygamelevel) 
+      end
+    
   end
 end
   
@@ -129,7 +137,8 @@ function love.draw()
   -- Восстановливаем фон
   love.graphics.setColor(255,255,255,255)
     -- Если выигрыш то все красное
-   if(levelOK==1) then 
+   if(bbb~=0) then 
+    --     love.graphics.print(aaa, 53, 3) 
     love.graphics.setColor(255,0,0,255)
    end 
   
