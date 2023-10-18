@@ -5,3 +5,4 @@ function love.conf(c)
   window.height = 512
 
 end
+ 
