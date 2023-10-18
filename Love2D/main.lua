@@ -17,6 +17,7 @@ function love.load()
   keyMess=0 -- Для проверки выбора меню
   -- для вращения игрока
   urad=0 uox=0 uoy=0 
+  imageMan=1 -- спрайти игрока
   
   -- Шрифт
   bungee_font = love.graphics.newFont("font.ttf", 30 )  
@@ -25,7 +26,17 @@ function love.load()
   imageWall=    love.graphics.newImage("Wall.png") 
   imageBox=     love.graphics.newImage("Box.png") 
   imageXbox=    love.graphics.newImage("Xbox.png") 
-  imageMan=     love.graphics.newImage("Man.png") 
+
+  imageManR=     love.graphics.newImage("ManR.png") 
+  imageManL=     love.graphics.newImage("ManL.png") 
+  imageManU=     love.graphics.newImage("ManU.png") 
+  imageManD=     love.graphics.newImage("ManD.png") 
+  
+  imageManXR=     love.graphics.newImage("ManXR.png") 
+  imageManXL=     love.graphics.newImage("ManXL.png") 
+  imageManXU=     love.graphics.newImage("ManXU.png") 
+  imageManXD=     love.graphics.newImage("ManXD.png")   
+  
   imageManX=    love.graphics.newImage("ManX.png") 
   imageBoxOk=   love.graphics.newImage("BoxOk.png") 
   -- Выставляем уровень изначально
@@ -55,7 +66,7 @@ function gamereset(gamelevel)
 end  -- End GAMERESET
 
 --###########################################
--- Функция установки игрового уровня по его номеру 
+-- Функция МЕНЮ 
 function gamemenu(menumsg)
     buttons = {"Выход1","Далее2","Сначала3","Первый4", escapebutton = 1, enterbutton = 4}
     keyMess=love.window.showMessageBox("SOCOBAN",menumsg,buttons)
@@ -73,10 +84,10 @@ end --end gamemenu
 function love.update(dt)
   -- Обработка клавиатуры
   function love.keyreleased(key)
-    if (key == "left")  then gamekeyevent(-1,-2,0,0) urad=3.14 uox=32 uoy=32 end
-    if (key == "right") then gamekeyevent(1,2,0,0)   urad=0 uox=0 uoy=0 end
-    if (key == "up")    then gamekeyevent(0,0,-1,-2) urad=3*3.14/2 uox=32 uoy=0 end  
-    if (key == "down")  then gamekeyevent(0,0,1,2)   urad=3.14/2 uox=0 uoy=32 end
+    if (key == "left")  then gamekeyevent(-1,-2,0,0) imageMan=1 end
+    if (key == "right") then gamekeyevent(1,2,0,0)   imageMan=2 end
+    if (key == "up")    then gamekeyevent(0,0,-1,-2) imageMan=3 end  
+    if (key == "down")  then gamekeyevent(0,0,1,2)   imageMan=4 end
     if (key == " " or key == "space")  then  gamemenu("Выберите режим:") end   
     if (key == "q" and mygamelevel<50) then  
         mygamelevel=mygamelevel+1
@@ -112,8 +123,21 @@ function love.draw()
      if(gamepad[myi][mxi]==2) then love.graphics.draw(imageXbox,  (mxi-1)*32,(myi-1)*32) end -- место
      if(gamepad[myi][mxi]==3) then love.graphics.draw(imageBox,   (mxi-1)*32,(myi-1)*32) end -- ящик
      if(gamepad[myi][mxi]==4) then love.graphics.draw(imageBoxOk, (mxi-1)*32,(myi-1)*32) end -- уст.ящик
-     if(gamepad[myi][mxi]==5) then love.graphics.draw(imageMan,   (mxi-1)*32,(myi-1)*32,urad,1,1,uox,uoy) end -- дядя
-     if(gamepad[myi][mxi]==6) then love.graphics.draw(imageManX,  (mxi-1)*32,(myi-1)*32,urad,1,1,uox,uoy) end -- дядя на Х поле
+     if(gamepad[myi][mxi]==5) or (gamepad[myi][mxi]==6) then -- дядя
+       if(imageMan==1) then love.graphics.draw(imageManL,(mxi-1)*32,(myi-1)*32) end 
+       if(imageMan==2) then love.graphics.draw(imageManR,(mxi-1)*32,(myi-1)*32) end 
+       if(imageMan==3) then love.graphics.draw(imageManU,(mxi-1)*32,(myi-1)*32) end 
+       if(imageMan==4) then love.graphics.draw(imageManD,(mxi-1)*32,(myi-1)*32) end 
+      end
+     --if(gamepad[myi][mxi]==6) then love.graphics.draw(imageManX,  (mxi-1)*32,(myi-1)*32,urad,1,1,uox,uoy) end -- дядя на Х поле
+      if(gamepad[myi][mxi]==6) or (gamepad[myi][mxi]==6) then -- дядя
+       if(imageMan==1) then love.graphics.draw(imageManXL,(mxi-1)*32,(myi-1)*32) end 
+       if(imageMan==2) then love.graphics.draw(imageManXR,(mxi-1)*32,(myi-1)*32) end 
+       if(imageMan==3) then love.graphics.draw(imageManXU,(mxi-1)*32,(myi-1)*32) end 
+       if(imageMan==4) then love.graphics.draw(imageManXD,(mxi-1)*32,(myi-1)*32) end 
+      end
+    
+    
     end
   end 
   
