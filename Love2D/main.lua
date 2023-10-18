@@ -119,6 +119,7 @@ function love.draw()
      if(gamepad[myi][mxi]==3) then love.graphics.draw(imageBox,   (mxi-1)*32,(myi-1)*32) end -- ящик
      if(gamepad[myi][mxi]==4) then love.graphics.draw(imageBoxOk, (mxi-1)*32,(myi-1)*32) end -- уст.ящик
      if(gamepad[myi][mxi]==5) or (gamepad[myi][mxi]==6) then -- дядя
+       -- Ложим под дядю спрайт цели под ящик(крест), если он нужен (=6)
        if(gamepad[myi][mxi]==6) then love.graphics.draw(imageXbox,  (mxi-1)*32,(myi-1)*32) end -- место  
        if(imageMan==1) then love.graphics.draw(imageManL,(mxi-1)*32,(myi-1)*32) end 
        if(imageMan==2) then love.graphics.draw(imageManR,(mxi-1)*32,(myi-1)*32) end 
