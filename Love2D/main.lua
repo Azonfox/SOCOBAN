@@ -22,23 +22,18 @@ function love.load()
   -- Шрифт
   bungee_font = love.graphics.newFont("font.ttf", 30 )  
   -- Картинки
-  imageGround=  love.graphics.newImage("Ground.png") 
-  imageWall=    love.graphics.newImage("Wall.png") 
-  imageBox=     love.graphics.newImage("Box.png") 
-  imageXbox=    love.graphics.newImage("Xbox.png") 
+  imageGround=  love.graphics.newImage("/Sprites/SB_00.png") 
+  imageWall=    love.graphics.newImage("/Sprites/SB_01.png") 
+  imageXbox=    love.graphics.newImage("/Sprites/SB_02.png") 
+  imageBox=     love.graphics.newImage("/Sprites/SB_03.png") 
+  imageBoxOk=   love.graphics.newImage("/Sprites/SB_04.png") 
+ 
+  imageManX=     love.graphics.newImage("/Sprites/SB_05.png") -- Спит
+  imageManR=     love.graphics.newImage("/Sprites/SB_06.png") 
+  imageManL=     love.graphics.newImage("/Sprites/SB_07.png") 
+  imageManD=     love.graphics.newImage("/Sprites/SB_08.png") 
+  imageManU=     love.graphics.newImage("/Sprites/SB_09.png") 
 
-  imageManR=     love.graphics.newImage("ManR.png") 
-  imageManL=     love.graphics.newImage("ManL.png") 
-  imageManU=     love.graphics.newImage("ManU.png") 
-  imageManD=     love.graphics.newImage("ManD.png") 
-  
-  imageManXR=     love.graphics.newImage("ManXR.png") 
-  imageManXL=     love.graphics.newImage("ManXL.png") 
-  imageManXU=     love.graphics.newImage("ManXU.png") 
-  imageManXD=     love.graphics.newImage("ManXD.png")   
-  
-  imageManX=    love.graphics.newImage("ManX.png") 
-  imageBoxOk=   love.graphics.newImage("BoxOk.png") 
   -- Выставляем уровень изначально
   gamereset(mygamelevel) 
 end -- End LOAD
@@ -124,20 +119,12 @@ function love.draw()
      if(gamepad[myi][mxi]==3) then love.graphics.draw(imageBox,   (mxi-1)*32,(myi-1)*32) end -- ящик
      if(gamepad[myi][mxi]==4) then love.graphics.draw(imageBoxOk, (mxi-1)*32,(myi-1)*32) end -- уст.ящик
      if(gamepad[myi][mxi]==5) or (gamepad[myi][mxi]==6) then -- дядя
+       if(gamepad[myi][mxi]==6) then love.graphics.draw(imageXbox,  (mxi-1)*32,(myi-1)*32) end -- место  
        if(imageMan==1) then love.graphics.draw(imageManL,(mxi-1)*32,(myi-1)*32) end 
        if(imageMan==2) then love.graphics.draw(imageManR,(mxi-1)*32,(myi-1)*32) end 
        if(imageMan==3) then love.graphics.draw(imageManU,(mxi-1)*32,(myi-1)*32) end 
        if(imageMan==4) then love.graphics.draw(imageManD,(mxi-1)*32,(myi-1)*32) end 
       end
-     --if(gamepad[myi][mxi]==6) then love.graphics.draw(imageManX,  (mxi-1)*32,(myi-1)*32,urad,1,1,uox,uoy) end -- дядя на Х поле
-      if(gamepad[myi][mxi]==6) or (gamepad[myi][mxi]==6) then -- дядя
-       if(imageMan==1) then love.graphics.draw(imageManXL,(mxi-1)*32,(myi-1)*32) end 
-       if(imageMan==2) then love.graphics.draw(imageManXR,(mxi-1)*32,(myi-1)*32) end 
-       if(imageMan==3) then love.graphics.draw(imageManXU,(mxi-1)*32,(myi-1)*32) end 
-       if(imageMan==4) then love.graphics.draw(imageManXD,(mxi-1)*32,(myi-1)*32) end 
-      end
-    
-    
     end
   end 
   
