@@ -1,4 +1,4 @@
---[[############ SOKOBAN ####################
+﻿--[[############ SOKOBAN ####################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
 2 - цель    |  5 - MEN на свободном поле
@@ -7,9 +7,10 @@
 -- Начальная загрузка
 function love.load()
   --Include
-   require "levels"  -- Все уровни
-  --require "Testlevels" -- Тестовые уровни
+   --require "levels"  -- Все уровни
+  require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
+  require "android"    -- для android
   --Переменные
   manx=1 --Координаты игрока XY
   many=1
@@ -19,13 +20,29 @@ function love.load()
   TileQ={}  -- Вырезенные спрайты 
   xblock=0  -- Считанный байт игрового поля
   kmen=0    -- для вращения игрока
+  tileSize=32
+  
+  -- Координаты в пикселях поля стрелок управления
+  ttx=0
+  tty=0
+  skey=3 --размер кнопки смартфона в клетках
+  tkx0=19*tileSize --Начальная точка поля стрелок управления X
+  tkwh=tileSize*skey
+  tkx1=tkx0+tkwh 
+  tkx2=tkx1+tkwh    
+  tkx3=tkx2+tkwh   
+  
+  tky0=0+tileSize --Начальная точка поля стрелок управления Y
+  tky1=tky0+tkwh  
+  tky2=tky1+tkwh   
+  tky3=tky2+tkwh
   
   -- Шрифт
-  bungee_font = love.graphics.newFont("font.ttf", 30 )  
+  bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   -- Картинки
-  TileSetPng=love.graphics.newImage("/Sprites/TileSet.png")
+  TileSetPng=love.graphics.newImage("tileset.png")
+  --TileSetPng=love.graphics.newImage("image64.png")
   TileSetPng:setFilter("nearest","linear")
-  tileSize=32
   ----- Вырезаем спрайты игрового поля
   -- Игровое поле
   TileQ[0]=love.graphics.newQuad(0*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
@@ -42,8 +59,10 @@ function love.load()
  
   -- Выставляем уровень изначально
   gamereset(mygamelevel) 
+  --  Расчитываем и устанавливаем масштабирование
+  success = love.window.setFullscreen( true,"desktop" )
+  myscale=love.graphics.getHeight()/(16*tileSize)
   
-  myscale=love.graphics.getHeight()/512
 end -- End LOAD
 
 --###########################################
@@ -86,6 +105,10 @@ end --end gamemenu
 --###########################################
 -- Рабочий процесс
 function love.update(dt)
+  
+  touchkey() 
+  --for I=1,  10000000  do  ttx=100000000*dt end -- Задержка :(
+  
   -- Обработка клавиатуры
   function love.keyreleased(key)
     if (key == "right") then gamekeyevent(1,2,0,0)   kmen=1 end
@@ -126,24 +149,24 @@ function love.draw()
      xblock=(gamepad[myi][mxi]) 
      if xblock>=5 then -- направления игрока:
       -- Подкладываем Х под игрока на поле
-      if(xblock==6) then love.graphics.draw(TileSetPng,TileQ[2],(mxi-1)*32,(myi-1)*32) end -- место 
+      if(xblock==6) then love.graphics.draw(TileSetPng,TileQ[2],(mxi-1)*tileSize,(myi-1)*tileSize) end -- место 
       xblock=5+kmen -- учитываем направление движения
      end
-      love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*32,(myi-1)*32)
+      love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,(myi-1)*tileSize)
     end
   end
   
   -- Печать номера уровня голубыми цифрами
   love.graphics.setFont( bungee_font )
   love.graphics.setColor(0,0,255,255) 
-  love.graphics.print("Level  "..mygamelevel, 620, 5)
+  love.graphics.print("Level  "..mygamelevel, tileSize*20, tileSize*12)
   
   -- Отладка Печать Y ---------------------------------------------------------------------
   love.graphics.setFont( bungee_font )
   love.graphics.setColor(0,255,0,255) 
-  love.graphics.print("Y="..many, 620, 40)
-  love.graphics.print("kMes="..keyMess, 620, 80)
-  love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), 620, 200)  
+  love.graphics.print("Y="..many, tileSize*20, tileSize*13)
+  love.graphics.print("kMes="..keyMess, tileSize*20, tileSize*14)
+  love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*15)  
   
   -- Если выигрыш то всё красное,
   -- иначе восстанавливаем фон
@@ -152,4 +175,13 @@ function love.draw()
   else
     love.graphics.setColor(255,255,255,255)
   end 
+  
+  -- Рисуем Стрелки
+  love.graphics.rectangle("fill",tkx1,tky0, tkwh, tkwh) -- ВВерх
+  love.graphics.rectangle("fill",tkx1,tky2, tkwh, tkwh) -- Вниз
+  love.graphics.rectangle("fill",tkx0,tky1, tkwh, tkwh) -- ВЛево
+  love.graphics.rectangle("fill",tkx2,tky1, tkwh, tkwh) -- Вправо
+  
+  love.graphics.circle("fill",ttx,tty,20)
+  
 end  -- End DRAW
