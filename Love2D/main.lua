@@ -107,7 +107,7 @@ end --end gamemenu
 function love.update(dt)
   
   touchkey() 
-  --for I=1,  10000000  do  ttx=100000000*dt end -- Задержка :(
+  --for I=1,  100000  do  ttx=100000000*dt end -- Задержка :(
   
   -- Обработка клавиатуры
   function love.keyreleased(key)

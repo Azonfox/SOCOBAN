@@ -5,8 +5,9 @@
       ttx,tty = love.touch.getPosition(touches[1])
       --love.touchpressed(id,ttx,tty)
       
-      ttx=ttx*2/3
-      tty=tty*2/3
+      -- Коофициенты несовпадения TOUCH c экраном  ???????
+      ttx=ttx*1.5
+      tty=tty*1.5
             
       if  ttx>tkx2 and ttx<tkx3 and tty>tky1 and tty<tky2 then gamekeyevent(1,2,0,0)   kmen=1 end -- Right
       if  ttx>tkx0 and ttx<tkx1 and tty>tky1 and tty<tky2 then gamekeyevent(-1,-2,0,0) kmen=2 end -- Left
