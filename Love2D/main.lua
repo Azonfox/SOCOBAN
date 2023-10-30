@@ -7,10 +7,10 @@
 -- Начальная загрузка
 function love.load()
   --Include
-   --require "levels"  -- Все уровни
-  require "testlevels" -- Тестовые уровни
+   require "levels"  -- Все уровни
+     -- require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
-  require "android"    -- для android
+  --require "android"    -- для android тут нету
   --Переменные
   manx=1 --Координаты игрока XY
   many=1
@@ -23,7 +23,7 @@ function love.load()
   tileSize=32
   
   -- Координаты в пикселях поля стрелок управления
-  ttx=0
+  ttx=100 --  изначально кружок от пальца не показываем.
   tty=0
   skey=3 --размер кнопки смартфона в клетках
   tkx0=19*tileSize --Начальная точка поля стрелок управления X
@@ -40,7 +40,7 @@ function love.load()
   -- Шрифт
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   -- Картинки
-  TileSetPng=love.graphics.newImage("tileset.png")
+  TileSetPng=love.graphics.newImage("tilesetgreen.png")
   --TileSetPng=love.graphics.newImage("image64.png")
   TileSetPng:setFilter("nearest","linear")
   ----- Вырезаем спрайты игрового поля
@@ -61,8 +61,8 @@ function love.load()
   gamereset(mygamelevel) 
   --  Расчитываем и устанавливаем масштабирование
   success = love.window.setFullscreen( true,"desktop" )
-  myscale=love.graphics.getHeight()/(16*tileSize)
-  
+     myscale=love.graphics.getHeight()/(16*tileSize)
+     mytranslate = 32 -- Сдвиг экрана вправо для камеры смартфона
 end -- End LOAD
 
 --###########################################
@@ -102,12 +102,30 @@ function gamemenu(menumsg)
     if (mygamelevel<=maxlevel) then gamereset(mygamelevel) end
 end --end gamemenu
 
+-- тест нажатия в смартфоне#######################
+function love.touchpressed( id, tttx, ttty)
+
+
+ -- переназначаем для показа кружка от пальца.
+-- делаем поправку на Сдвиг экрана вправо 
+ttx=tttx-mytranslate
+tty=ttty
+-- Коофициенты несовпадения TOUCH c экраном  ???????
+      ttx=ttx/myscale
+      tty=tty/myscale       
+      if  ttx>tkx2 and ttx<tkx3 and tty>tky1 and tty<tky2 then gamekeyevent(1,2,0,0)   kmen=1 end -- Right
+      if  ttx>tkx0 and ttx<tkx1 and tty>tky1 and tty<tky2 then gamekeyevent(-1,-2,0,0) kmen=2 end -- Left
+      if  ttx>tkx1 and ttx<tkx2 and tty>tky2 and tty<tky3 then gamekeyevent(0,0,1,2)   kmen=3 end -- Down
+      if  ttx>tkx1 and ttx<tkx2 and tty>tky0 and tty<tky1 then gamekeyevent(0,0,-1,-2) kmen=4 end -- UP
+      if ttx>tkx0 and ttx<tkx1 and tty>tky3+tky1 and tty<tky3+tky2 then     gamemenu("menumsg") end
+
+ if tty < 100  and ttx<100  then gamemenu("toutch pressed:") end
+ end
+
+
 --###########################################
 -- Рабочий процесс
 function love.update(dt)
-  
-  touchkey() 
-  --for I=1,  100000  do  ttx=100000000*dt end -- Задержка :(
   
   -- Обработка клавиатуры
   function love.keyreleased(key)
@@ -143,17 +161,20 @@ end -- End UPDATE
  -- Прорисовка игрового поля
 function love.draw()
   love.graphics.scale( myscale ) -- Масштабирование всего игрового поля
-  
+ love.graphics.translate(mytranslate,0)  -- Сдвиг для камеры смартфона
+
   for myi=1, 16 do
     for mxi=1,19 do
      xblock=(gamepad[myi][mxi]) 
-     if xblock>=5 then -- направления игрока:
+     if xblock<19 then -- зеленка, пустота...
+     if xblock>=5  then -- направления игрока:
       -- Подкладываем Х под игрока на поле
       if(xblock==6) then love.graphics.draw(TileSetPng,TileQ[2],(mxi-1)*tileSize,(myi-1)*tileSize) end -- место 
       xblock=5+kmen -- учитываем направление движения
      end
       love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,(myi-1)*tileSize)
     end
+   end
   end
   
   -- Печать номера уровня голубыми цифрами

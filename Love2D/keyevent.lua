@@ -75,6 +75,8 @@ if gamepad[many+ky1][manx+kx1]==4 and gamepad[many+ky2][manx+kx2]==0 then
 end    
 end
 ::continue::
+
+-- Сохранить информацию об откате
 end
 
 
