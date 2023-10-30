@@ -17,17 +17,10 @@ function love.load()
   keyMess=0 -- Для проверки выбора меню
 
   TileQ={}  -- Вырезенные спрайты 
+  UndoMen={}  -- Таблица UNDO для отката
   xblock=0  -- Считанный байт игрового поля
   kmen=0    -- для вращения игрока
   tileSize=32
- 
-   UndoMen={}  -- Таблица UNDO для отката
-    UndoMen[0]=0 -- X
-    UndoMen[1]=0 -- Y
-    UndoMen[2]=0 -- направление
-    UndoMen[3]=0 -- ячека+0 - men  
-    UndoMen[4]=0 -- ячека+1
-    UndoMen[5]=0 -- ячейка+2
     
   -- Координаты в пикселях поля стрелок управления
   ttx=100 --  изначально кружок от пальца не показываем.
@@ -94,12 +87,7 @@ function gamereset(gamelevel)
     end
    end 
    -- изначально сохраняем информацию об откате
-    UndoMen[0]=manx -- X
-    UndoMen[1]=many -- Y
-    UndoMen[2]=0 -- направление
-    UndoMen[3]=gamepad[many][manx] -- ячека men
-    UndoMen[4]=gamepad[many][manx+1] -- ячека+1
-    UndoMen[5]=gamepad[many][manx+2] -- ячейка+2
+    setundomen()
    
 end  -- End GAMERESET
 
@@ -133,7 +121,9 @@ function love.touchpressed( id, tttx, ttty)
       if  ttx>tkx1 and ttx<tkx2 and tty>tky0 and tty<tky1 then gamekeyevent(0,0,-1,-2) kmen=4 end -- UP
       if ttx>tkx0 and ttx<tkx1 and tty>tky3+tky1 and tty<tky3+tky2 then     gamemenu("menumsg") end
       -- вывод меню в левом верхнем углу- просто тест 
-      if tty < 100  and ttx<100  then gamemenu("toutch pressed:") end
+      if tty < 100  and ttx<100  then gamemenu("toutch pressed:") end -- menu
+      if tty > 300  and ttx<100  then getundomen() end   -- undo   
+      
  end
 
 
@@ -152,14 +142,8 @@ function love.update(dt)
         mygamelevel=mygamelevel+1
         gamereset(mygamelevel) 
     end    
-    if (key == "z")  then  -- восстанавливаем согласно откату
-      manx=UndoMen[0]
-      many=UndoMen[1]
-      gamepad[many][manx]=UndoMen[3]
-      gamepad[many][manx+1]=UndoMen[4]
-      gamepad[many][manx+2]=UndoMen[5]      
-      --gamemenu("ZZZZ:")
-    end   
+    if (key == "z")  then  getundomen() end   -- восстанавливаем согласно откату
+    
   end
    
   -- Проверка выигрыша - есть ли вообще свободные ящики?
@@ -217,7 +201,7 @@ function love.draw()
   --love.graphics.print("Y="..many, tileSize*20, tileSize*13)
   love.graphics.print("kMes="..keyMess, tileSize*20, tileSize*14)
   love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*15)  
-  love.graphics.print("UM="..UndoMen[0].."-"..UndoMen[1].."-"..UndoMen[2].."-"..UndoMen[3].."-"..UndoMen[4], tileSize*20, tileSize*13)
+  love.graphics.print("UMt="..UndoMen[0].."-"..UndoMen[1].."-"..UndoMen[2].."-"..UndoMen[3].."-"..UndoMen[4], tileSize*20, tileSize*13)
   
   -- Если выигрыш то всё красное,
   -- иначе восстанавливаем  цвета
