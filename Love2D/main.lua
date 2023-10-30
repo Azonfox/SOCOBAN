@@ -3,14 +3,13 @@
 1 - стена   |  4 - ящик стоит на цели
 2 - цель    |  5 - MEN на свободном поле
             |  6 - MEN стоит на цели --]]
---###########################################
+--################################################################################################## 
 -- Начальная загрузка
 function love.load()
   --Include
    require "levels"  -- Все уровни
      -- require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
-  --require "android"    -- для android тут нету
   --Переменные
   manx=1 --Координаты игрока XY
   many=1
@@ -21,7 +20,15 @@ function love.load()
   xblock=0  -- Считанный байт игрового поля
   kmen=0    -- для вращения игрока
   tileSize=32
-  
+ 
+   UndoMen={}  -- Таблица UNDO для отката
+    UndoMen[0]=0 -- X
+    UndoMen[1]=0 -- Y
+    UndoMen[2]=0 -- направление
+    UndoMen[3]=0 -- ячека+0 - men  
+    UndoMen[4]=0 -- ячека+1
+    UndoMen[5]=0 -- ячейка+2
+    
   -- Координаты в пикселях поля стрелок управления
   ttx=100 --  изначально кружок от пальца не показываем.
   tty=0
@@ -86,6 +93,14 @@ function gamereset(gamelevel)
       if(gamepad[myi][mxi]==5) then manx=mxi many=myi end -- игрок
     end
    end 
+   -- изначально сохраняем информацию об откате
+    UndoMen[0]=manx -- X
+    UndoMen[1]=many -- Y
+    UndoMen[2]=0 -- направление
+    UndoMen[3]=gamepad[many][manx] -- ячека men
+    UndoMen[4]=gamepad[many][manx+1] -- ячека+1
+    UndoMen[5]=gamepad[many][manx+2] -- ячейка+2
+   
 end  -- End GAMERESET
 
 --###########################################
@@ -102,28 +117,27 @@ function gamemenu(menumsg)
     if (mygamelevel<=maxlevel) then gamereset(mygamelevel) end
 end --end gamemenu
 
--- тест нажатия в смартфоне#######################
+--################################################################################################## 
+-- нажатия в смартфоне
 function love.touchpressed( id, tttx, ttty)
-
-
- -- переназначаем для показа кружка от пальца.
--- делаем поправку на Сдвиг экрана вправо 
-ttx=tttx-mytranslate
-tty=ttty
--- Коофициенты несовпадения TOUCH c экраном  ???????
+  -- переназначаем для показа кружка от пальца.
+  -- делаем поправку на Сдвиг экрана вправо 
+  ttx=tttx-mytranslate
+  tty=ttty
+  -- Коофициенты несовпадения TOUCH c экраном 
       ttx=ttx/myscale
-      tty=tty/myscale       
+      tty=tty/myscale      -- определяем нажатую область как стрелки
       if  ttx>tkx2 and ttx<tkx3 and tty>tky1 and tty<tky2 then gamekeyevent(1,2,0,0)   kmen=1 end -- Right
       if  ttx>tkx0 and ttx<tkx1 and tty>tky1 and tty<tky2 then gamekeyevent(-1,-2,0,0) kmen=2 end -- Left
       if  ttx>tkx1 and ttx<tkx2 and tty>tky2 and tty<tky3 then gamekeyevent(0,0,1,2)   kmen=3 end -- Down
       if  ttx>tkx1 and ttx<tkx2 and tty>tky0 and tty<tky1 then gamekeyevent(0,0,-1,-2) kmen=4 end -- UP
       if ttx>tkx0 and ttx<tkx1 and tty>tky3+tky1 and tty<tky3+tky2 then     gamemenu("menumsg") end
-
- if tty < 100  and ttx<100  then gamemenu("toutch pressed:") end
+      -- вывод меню в левом верхнем углу- просто тест 
+      if tty < 100  and ttx<100  then gamemenu("toutch pressed:") end
  end
 
 
---###########################################
+--################################################################################################## 
 -- Рабочий процесс
 function love.update(dt)
   
@@ -138,6 +152,14 @@ function love.update(dt)
         mygamelevel=mygamelevel+1
         gamereset(mygamelevel) 
     end    
+    if (key == "z")  then  -- восстанавливаем согласно откату
+      manx=UndoMen[0]
+      many=UndoMen[1]
+      gamepad[many][manx]=UndoMen[3]
+      gamepad[many][manx+1]=UndoMen[4]
+      gamepad[many][manx+2]=UndoMen[5]      
+      --gamemenu("ZZZZ:")
+    end   
   end
    
   -- Проверка выигрыша - есть ли вообще свободные ящики?
@@ -157,22 +179,29 @@ function love.update(dt)
   if(flagOk==20) then gamemenu("Поздравляем!\nВы\nвыиграли") end
 end -- End UPDATE
   
---########################################### 
+--################################################################################################## 
  -- Прорисовка игрового поля
 function love.draw()
   love.graphics.scale( myscale ) -- Масштабирование всего игрового поля
  love.graphics.translate(mytranslate,0)  -- Сдвиг для камеры смартфона
 
+--love.graphics.setBackgroundColor(0,255,0,255) -- фон
+
+
   for myi=1, 16 do
     for mxi=1,19 do
      xblock=(gamepad[myi][mxi]) 
      if xblock<19 then -- зеленка, пустота...
-     if xblock>=5  then -- направления игрока:
-      -- Подкладываем Х под игрока на поле
+     
+     if xblock>=5  then -- печать игрока:
+     -- Подкладываем пол под игрока
+      if(xblock==5) then love.graphics.draw(TileSetPng,TileQ[0],(mxi-1)*tileSize,(myi-1)*tileSize) end -- место 
+     -- Подкладываем Х под игрока на поле
       if(xblock==6) then love.graphics.draw(TileSetPng,TileQ[2],(mxi-1)*tileSize,(myi-1)*tileSize) end -- место 
       xblock=5+kmen -- учитываем направление движения
      end
-      love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,(myi-1)*tileSize)
+     -- печать тайла в соответствии с картой
+     love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,(myi-1)*tileSize)
     end
    end
   end
@@ -185,12 +214,13 @@ function love.draw()
   -- Отладка Печать Y ---------------------------------------------------------------------
   love.graphics.setFont( bungee_font )
   love.graphics.setColor(0,255,0,255) 
-  love.graphics.print("Y="..many, tileSize*20, tileSize*13)
+  --love.graphics.print("Y="..many, tileSize*20, tileSize*13)
   love.graphics.print("kMes="..keyMess, tileSize*20, tileSize*14)
   love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*15)  
+  love.graphics.print("UM="..UndoMen[0].."-"..UndoMen[1].."-"..UndoMen[2].."-"..UndoMen[3].."-"..UndoMen[4], tileSize*20, tileSize*13)
   
   -- Если выигрыш то всё красное,
-  -- иначе восстанавливаем фон
+  -- иначе восстанавливаем  цвета
   if(flagOk~=0) then 
     love.graphics.setColor(255,0,0,255)
   else

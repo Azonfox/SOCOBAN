@@ -7,7 +7,7 @@
   
 -- Обработка движения
 --###########################################
---Вправо
+
 function gamekeyevent(kx1,kx2,ky1,ky2)
   if(manx>1 and manx<19 and many>1 and many<16) then
     
@@ -15,6 +15,14 @@ function gamekeyevent(kx1,kx2,ky1,ky2)
 if gamepad[many+ky1][manx+kx1]==1 then goto continue end  
 if gamepad[many+ky1][manx+kx1]==3 and (gamepad[many+ky2][manx+kx2]==3 or gamepad[many+ky2][manx+kx2]==1) then 
     goto continue end  
+
+-- Если движение есть - Сохранить информацию об откате
+    UndoMen[0]=manx -- X
+    UndoMen[1]=many -- Y
+    UndoMen[2]=0 -- направление
+    UndoMen[3]=gamepad[many][manx] -- ячека men
+    UndoMen[4]=gamepad[many][manx+1] -- ячека+1
+    UndoMen[5]=gamepad[many][manx+2] -- ячейка+2
 
 --2 -движение свободное - поле
 if gamepad[many+ky1][manx+kx1]==0 then 
@@ -75,8 +83,6 @@ if gamepad[many+ky1][manx+kx1]==4 and gamepad[many+ky2][manx+kx2]==0 then
 end    
 end
 ::continue::
-
--- Сохранить информацию об откате
 end
 
 
