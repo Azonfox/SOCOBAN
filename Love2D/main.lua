@@ -39,8 +39,11 @@ function love.load()
   
   -- Шрифт
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
+  Level_font  = love.graphics.newFont("font.ttf", tileSize)  
   -- Картинки
-  TileSetPng=love.graphics.newImage("tilesetgreen.png")
+  TileSetPng=love.graphics.newImage("tilesetgreen2.png")
+  ArrowsPng=love.graphics.newImage("arrows.png")
+ 
   --TileSetPng=love.graphics.newImage("image64.png")
   TileSetPng:setFilter("nearest","linear")
   ----- Вырезаем спрайты игрового поля
@@ -87,7 +90,7 @@ function gamereset(gamelevel)
     end
    end 
    -- изначально сохраняем информацию об откате
-    setundomen()
+    undosave()
    
 end  -- End GAMERESET
 
@@ -122,7 +125,7 @@ function love.touchpressed( id, tttx, ttty)
       if ttx>tkx0 and ttx<tkx1 and tty>tky3+tky1 and tty<tky3+tky2 then     gamemenu("menumsg") end
       -- вывод меню в левом верхнем углу- просто тест 
       if tty < 100  and ttx<100  then gamemenu("toutch pressed:") end -- menu
-      if tty > 300  and ttx<100  then getundomen() end   -- undo   
+      if tty > 300  and ttx<100  then undoload() end   -- undo   
       
  end
 
@@ -142,7 +145,7 @@ function love.update(dt)
         mygamelevel=mygamelevel+1
         gamereset(mygamelevel) 
     end    
-    if (key == "z")  then  getundomen() end   -- восстанавливаем согласно откату
+    if (key == "z")  then  undoload() end   -- восстанавливаем согласно откату
     
   end
    
@@ -191,17 +194,24 @@ function love.draw()
   end
   
   -- Печать номера уровня голубыми цифрами
-  love.graphics.setFont( bungee_font )
+  love.graphics.setFont( Level_font )
   love.graphics.setColor(0,0,255,255) 
-  love.graphics.print("Level  "..mygamelevel, tileSize*20, tileSize*12)
+  love.graphics.print("Level  "..mygamelevel, tileSize*20, tileSize*15)
   
   -- Отладка Печать Y ---------------------------------------------------------------------
   love.graphics.setFont( bungee_font )
   love.graphics.setColor(0,255,0,255) 
   --love.graphics.print("Y="..many, tileSize*20, tileSize*13)
-  love.graphics.print("kMes="..keyMess, tileSize*20, tileSize*14)
-  love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*15)  
-  love.graphics.print("UMt="..UndoMen[0].."-"..UndoMen[1].."-"..UndoMen[2].."-"..UndoMen[3].."-"..UndoMen[4], tileSize*20, tileSize*13)
+  love.graphics.print("kMes="..keyMess, tileSize*20, tileSize*13)
+  love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*14)  
+  
+  -- Вывод UNDO массива в строку
+    --love.graphics.print("123456789012345678901234567890", tileSize, tileSize*13) 
+    love.graphics.print(" X_Y__M_+X+___-X-__+Y+__-Y-",tileSize, tileSize*14) 
+  for i,v in pairs(UndoMen) do
+       love.graphics.print(UndoMen[i], tileSize+i*30, tileSize*15)     
+  end
+  
   
   -- Если выигрыш то всё красное,
   -- иначе восстанавливаем  цвета
@@ -212,10 +222,14 @@ function love.draw()
   end 
   
   -- Рисуем Стрелки
+  --[[
   love.graphics.rectangle("fill",tkx1,tky0, tkwh, tkwh) -- ВВерх
   love.graphics.rectangle("fill",tkx1,tky2, tkwh, tkwh) -- Вниз
   love.graphics.rectangle("fill",tkx0,tky1, tkwh, tkwh) -- ВЛево
   love.graphics.rectangle("fill",tkx2,tky1, tkwh, tkwh) -- Вправо
+  --]]
+  
+  love.graphics.draw(ArrowsPng,tileSize*19,tileSize*1)
   
   love.graphics.circle("fill",ttx,tty,20)
   

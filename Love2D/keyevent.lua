@@ -7,23 +7,23 @@
  
 --###########################################
 -- Функция UNDO MEN - сохранение 
-function setundomen()
- if many>2 and manx>2 and manx<18 and many<15 then -- затычка ошибок выхода за игровое поле!!!
+function undosave()
   UndoMen[0]=manx -- координаты мена
   UndoMen[1]=many
   UndoMen[2]=gamepad[many][manx]   -- men
   UndoMen[3]=gamepad[many][manx+1] -- R+1
-  UndoMen[4]=gamepad[many][manx+2] -- R+2
   UndoMen[5]=gamepad[many][manx-1] -- L-1
-  UndoMen[6]=gamepad[many][manx-2] -- L-2  
   UndoMen[7]=gamepad[many+1][manx] -- D+1
-  UndoMen[8]=gamepad[many+2][manx] -- D+2  
   UndoMen[9]=gamepad[many-1][manx] -- U+1
-  UndoMen[10]=gamepad[many-2][manx] -- U+2  
- end
+  
+  -- Обработка ошибок выхода за игровое поле!!!
+  if manx>17 then UndoMen[4]=nil else  UndoMen[4]=gamepad[many][manx+2] end -- R+2 
+  if manx<3  then UndoMen[6]=nil else  UndoMen[6]=gamepad[many][manx-2] end -- L-2  
+  if many>14 then UndoMen[8]=nil else  UndoMen[8]=gamepad[many+2][manx] end-- D+2   
+  if many<3  then UndoMen[10]=nil else UndoMen[10]=gamepad[many-2][manx] end-- U+2   
 end
 ---- Функция GET UNDO MEN - восстановление 
-  function getundomen() 
+  function undoload() 
     manx=UndoMen[0] 
     many=UndoMen[1]
     gamepad[many][manx]  =UndoMen[2] -- men
@@ -35,6 +35,12 @@ end
     gamepad[many+2][manx]=UndoMen[8] -- D+2  
     gamepad[many-1][manx]=UndoMen[9] -- U+1
     gamepad[many-2][manx]=UndoMen[10] -- U+2 
+    
+      -- Обработка ошибок выхода за игровое поле!!!
+    if UndoMen[4]  then gamepad[many][manx+2]=UndoMen[4] end -- R+2 
+    if UndoMen[6]  then gamepad[many][manx-2]=UndoMen[6] end -- L-2  
+    if UndoMen[8]  then gamepad[many+2][manx]=UndoMen[8] end -- D+2   
+    if UndoMen[10] then gamepad[many-2][manx]=UndoMen[10] end-- U+2   
 end
 
 
@@ -51,7 +57,7 @@ if gamepad[many+ky1][manx+kx1]==4 and (gamepad[many+ky2][manx+kx2]==4 or gamepad
     goto continue end  -- ящик на цели с упором
 
 -- Если движение есть - Сохранить информацию об откате
-  setundomen()
+  undosave()
 
 --2 -движение свободное - поле
 if gamepad[many+ky1][manx+kx1]==0 then 
