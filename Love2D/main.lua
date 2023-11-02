@@ -23,7 +23,7 @@ function love.load()
   tileSize=32
     
   -- Координаты в пикселях поля стрелок управления
-  ttx=100 --  изначально кружок от пальца не показываем.
+  ttx=1000 --  изначально кружок от пальца не показываем.
   tty=0
   skey=3 --размер кнопки смартфона в клетках
   tkx0=19*tileSize --Начальная точка поля стрелок управления X
@@ -43,7 +43,7 @@ function love.load()
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   Level_font  = love.graphics.newFont("font.ttf", tileSize)  
   -- Картинки
-  TileSetPng=love.graphics.newImage("tilesetgreen2.png")
+  TileSetPng=love.graphics.newImage("tilesetgreen3.png")
   ArrowsPng=love.graphics.newImage("arrows.png")
  
   --TileSetPng=love.graphics.newImage("image64.png")
@@ -55,6 +55,8 @@ function love.load()
   TileQ[2]=love.graphics.newQuad(2*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
   TileQ[3]=love.graphics.newQuad(3*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
   TileQ[4]=love.graphics.newQuad(4*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
+  TileQ[11]=love.graphics.newQuad(5*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
+  TileQ[12]=love.graphics.newQuad(5*tileSize,1*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
   -- Men
   TileQ[5]=love.graphics.newQuad(0*tileSize,1*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
   TileQ[6]=love.graphics.newQuad(1*tileSize,1*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
@@ -65,7 +67,7 @@ function love.load()
   -- Выставляем уровень изначально
   gamereset(mygamelevel) 
   --  Расчитываем и устанавливаем масштабирование
-  success = love.window.setFullscreen( true,"desktop" )
+  success = love.window.setFullscreen( false,"desktop" )
      myscale=love.graphics.getHeight()/(16*tileSize)
      mytranslate = 32 -- Сдвиг экрана вправо для камеры смартфона
 end -- End LOAD
@@ -91,6 +93,26 @@ function gamereset(gamelevel)
       if(gamepad[myi][mxi]==5) then manx=mxi many=myi end -- игрок
     end
    end 
+   
+-- Замена внешнего поля на фон 
+   for myi=1,16 do
+    for mxi=1,19 do 
+      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=11 else break end 
+    end
+    for mxi=19,1,-1 do 
+      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=11 else break end 
+    end   
+   end    
+
+    for mxi=1,19 do
+    for myi=1,16 do 
+      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==11) then gamepad[myi][mxi]=11 else break end 
+    end
+    for myi=16,1,-1 do 
+      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==11) then gamepad[myi][mxi]=11 else break end 
+    end   
+   end  
+   
    -- изначально сохраняем информацию об откате
     undosave()
    
@@ -174,24 +196,35 @@ function love.draw()
   love.graphics.scale( myscale ) -- Масштабирование всего игрового поля
  love.graphics.translate(mytranslate,0)  -- Сдвиг для камеры смартфона
 
---love.graphics.setBackgroundColor(0,255,0,255) -- фон
+  love.graphics.setBackgroundColor(16,15,69,255) -- фон
+
+  -- Заливаем фон, есть повтор далее :(
+  for myi=1, 16 do
+    for mxi=0,19 do  -- +9
+     love.graphics.draw(TileSetPng,TileQ[11],(mxi-1)*tileSize,(myi-1)*tileSize)
+    end
+  end
+  -- Заливаем фон меню
+  for myi=1, 16 do
+    for mxi=19,19+9 do  -- +9
+     love.graphics.draw(TileSetPng,TileQ[12],(mxi-1)*tileSize,(myi-1)*tileSize)
+    end
+  end
 
 
   for myi=1, 16 do
     for mxi=1,19 do
      xblock=(gamepad[myi][mxi]) 
-     if xblock<19 then -- зеленка, пустота...
-     
-     if xblock>=5  then -- печать игрока:
+    
+     if xblock>=5 and  xblock<11 then -- печать игрока:
      -- Подкладываем пол под игрока
-      if(xblock==5) then love.graphics.draw(TileSetPng,TileQ[0],(mxi-1)*tileSize,(myi-1)*tileSize) end -- место 
+      if(xblock==5) then love.graphics.draw(TileSetPng,TileQ[0],(mxi-1)*tileSize,(myi-1)*tileSize) end  
      -- Подкладываем Х под игрока на поле
-      if(xblock==6) then love.graphics.draw(TileSetPng,TileQ[2],(mxi-1)*tileSize,(myi-1)*tileSize) end -- место 
+      if(xblock==6) then love.graphics.draw(TileSetPng,TileQ[2],(mxi-1)*tileSize,(myi-1)*tileSize) end  
       xblock=5+kmen -- учитываем направление движения
      end
      -- печать тайла в соответствии с картой
      love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,(myi-1)*tileSize)
-    end
    end
   end
   
@@ -200,20 +233,24 @@ function love.draw()
   love.graphics.setColor(0,0,255,255) 
   love.graphics.print("Level  "..mygamelevel, tileSize*20, tileSize*15)
   
-  -- Отладка Печать Y ---------------------------------------------------------------------
+  --love.graphics.setFont( bungee_font )
+  love.graphics.setColor(0,255,0,255) 
+  love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*14) 
+  
+   --[[
+ -- Отладка Печать Y ---------------------------------------------------------------------
   love.graphics.setFont( bungee_font )
   love.graphics.setColor(0,255,0,255) 
   --love.graphics.print("Y="..many, tileSize*20, tileSize*13)
   love.graphics.print("kMes="..keyMess, tileSize*20, tileSize*13)
-  love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*14)  
+ 
   
   -- Вывод UNDO массива в строку
-    --love.graphics.print("123456789012345678901234567890", tileSize, tileSize*13) 
-    love.graphics.print(" X_Y__M_+X+___-X-__+Y+__-Y-",tileSize, tileSize*14) 
+  love.graphics.print(" X_Y__M_+X+___-X-__+Y+__-Y-",tileSize, tileSize*14) 
   for i,v in pairs(UndoMen) do
        love.graphics.print(UndoMen[i], tileSize+i*30, tileSize*15)     
   end
-  
+  --]]
   
   -- Если выигрыш то всё красное,
   -- иначе восстанавливаем  цвета
