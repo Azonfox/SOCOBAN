@@ -31,12 +31,13 @@ function love.load()
   tkx1=tkx0+tkwh 
   tkx2=tkx1+tkwh    
   tkx3=tkx2+tkwh   
-  
-  tky0=0+tileSize --Начальная точка поля стрелок управления Y
+  tky0=tileSize --Начальная точка поля стрелок управления Y
   tky1=tky0+tkwh  
   tky2=tky1+tkwh   
   tky3=tky2+tkwh
   
+  tmy1=tky3+tileSize  --Начальная точка поля Menu
+  tmy2=tmy1+tkwh   
   -- Звуки
   sound1=love.audio.newSource("click1.mp3","static")
   -- Шрифт
@@ -66,10 +67,13 @@ function love.load()
  
   -- Выставляем уровень изначально
   gamereset(mygamelevel) 
-  --  Расчитываем и устанавливаем масштабирование
-  success = love.window.setFullscreen( false,"desktop" )
-     myscale=love.graphics.getHeight()/(16*tileSize)
-     mytranslate = 32 -- Сдвиг экрана вправо для камеры смартфона
+  --  Расчитываем и устанавливаем масштабирование 
+  -- Вначале по высоте
+  success = love.window.setFullscreen( true,"desktop" )
+  myscale=love.graphics.getHeight()/(16*tileSize)
+  -- Если не входит по длине, пересчитываем масштаб
+  if (love.graphics.getWidth()/myscale<((19+9+1)*tileSize)) then myscale=love.graphics.getWidth()/((19+9+1)*tileSize) end
+  mytranslate = 32 -- Сдвиг экрана вправо для камеры смартфона
 end -- End LOAD
 
 --###########################################
@@ -146,10 +150,16 @@ function love.touchpressed( id, tttx, ttty)
       if  ttx>tkx0 and ttx<tkx1 and tty>tky1 and tty<tky2 then gamekeyevent(-1,-2,0,0) kmen=2 end -- Left
       if  ttx>tkx1 and ttx<tkx2 and tty>tky2 and tty<tky3 then gamekeyevent(0,0,1,2)   kmen=3 end -- Down
       if  ttx>tkx1 and ttx<tkx2 and tty>tky0 and tty<tky1 then gamekeyevent(0,0,-1,-2) kmen=4 end -- UP
-      if ttx>tkx0 and ttx<tkx1 and tty>tky3+tky1 and tty<tky3+tky2 then     gamemenu("menumsg") end
+      --if ttx>tkx0 and ttx<tkx1 and tty>tky3+tky1 and tty<tky3+tky2 then     gamemenu("menumsg") end
+      -- Проверка кнопок меню
+      if ttx>tkx0 and ttx<tkx1 and tty>tmy1 and tty<tmy2 then  undoload() end
+      if ttx>tkx1 and ttx<tkx2 and tty>tmy1 and tty<tmy2 then  gamereset(mygamelevel) end
+      if ttx>tkx2 and ttx<tkx3 and tty>tmy1 and tty<tmy2 then  gamemenu("MENU-touch") end
+      --[[
       -- вывод меню в левом верхнем углу- просто тест 
       if tty < 100  and ttx<100  then gamemenu("toutch pressed:") end -- menu
-      if tty > 300  and ttx<100  then undoload() end   -- undo   
+      if tty > 300  and ttx<100  then undoload() end   -- undo  
+      --]]
       
  end
 
@@ -233,9 +243,10 @@ function love.draw()
   love.graphics.setColor(0,0,255,255) 
   love.graphics.print("Level  "..mygamelevel, tileSize*20, tileSize*15)
   
-  --love.graphics.setFont( bungee_font )
+  love.graphics.setFont( bungee_font )
   love.graphics.setColor(0,255,0,255) 
-  love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*14) 
+  love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*14+10) 
+  love.graphics.print("sc-"..myscale, tileSize*20, tileSize*10+10) 
   
    --[[
  -- Отладка Печать Y ---------------------------------------------------------------------
@@ -261,15 +272,17 @@ function love.draw()
   end 
   
   -- Рисуем Стрелки
-  --[[
-  love.graphics.rectangle("fill",tkx1,tky0, tkwh, tkwh) -- ВВерх
-  love.graphics.rectangle("fill",tkx1,tky2, tkwh, tkwh) -- Вниз
-  love.graphics.rectangle("fill",tkx0,tky1, tkwh, tkwh) -- ВЛево
-  love.graphics.rectangle("fill",tkx2,tky1, tkwh, tkwh) -- Вправо
-  --]]
+  love.graphics.rectangle("line",tkx1,tky0, tkwh, tkwh) -- ВВерх
+  love.graphics.rectangle("line",tkx1,tky2, tkwh, tkwh) -- Вниз
+  love.graphics.rectangle("line",tkx0,tky1, tkwh, tkwh) -- ВЛево
+  love.graphics.rectangle("line",tkx2,tky1, tkwh, tkwh) -- Вправо
   
+  -- menu под стрелками
+  love.graphics.rectangle("line",tkx0,tky3+tileSize, tkwh, tkwh) -- Левая
+  love.graphics.rectangle("line",tkx0+tileSize*skey,tky3+tileSize, tkwh, tkwh) -- Средняя
+  love.graphics.rectangle("line",tkx0+tileSize*skey*2,tky3+tileSize, tkwh, tkwh) -- Правая
+ 
   love.graphics.draw(ArrowsPng,tileSize*19,tileSize*1)
   
   love.graphics.circle("fill",ttx,tty,20)
-  
 end  -- End DRAW
