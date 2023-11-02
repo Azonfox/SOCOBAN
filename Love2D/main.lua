@@ -37,6 +37,8 @@ function love.load()
   tky2=tky1+tkwh   
   tky3=tky2+tkwh
   
+  -- Звуки
+  sound1=love.audio.newSource("click1.mp3","static")
   -- Шрифт
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   Level_font  = love.graphics.newFont("font.ttf", tileSize)  

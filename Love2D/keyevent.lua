@@ -28,15 +28,10 @@ end
     many=UndoMen[1]
     gamepad[many][manx]  =UndoMen[2] -- men
     gamepad[many][manx+1]=UndoMen[3] -- R+1
-    gamepad[many][manx+2]=UndoMen[4] -- R+2
     gamepad[many][manx-1]=UndoMen[5] -- L-1
-    gamepad[many][manx-2]=UndoMen[6] -- L-2  
     gamepad[many+1][manx]=UndoMen[7] -- D+1
-    gamepad[many+2][manx]=UndoMen[8] -- D+2  
     gamepad[many-1][manx]=UndoMen[9] -- U+1
-    gamepad[many-2][manx]=UndoMen[10] -- U+2 
-    
-      -- Обработка ошибок выхода за игровое поле!!!
+    -- Обработка ошибок выхода за игровое поле!!!
     if UndoMen[4]  then gamepad[many][manx+2]=UndoMen[4] end -- R+2 
     if UndoMen[6]  then gamepad[many][manx-2]=UndoMen[6] end -- L-2  
     if UndoMen[8]  then gamepad[many+2][manx]=UndoMen[8] end -- D+2   
@@ -47,6 +42,8 @@ end
 -- Обработка движения
 --###########################################
 function gamekeyevent(kx1,kx2,ky1,ky2)
+  sound1:play() --  играем шаг mena
+  
   if(manx>1 and manx<19 and many>1 and many<16) then
     
   --1 Стена, упирающийся ящик - нет движения!
