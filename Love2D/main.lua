@@ -1,4 +1,4 @@
-﻿--[[############ SOKOBAN ####################
+﻿--[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
 2 - цель    |  5 - MEN на свободном поле
@@ -13,6 +13,10 @@ function love.load()
   --Переменные
   manx=1 --Координаты игрока XY
   many=1
+  rng=1 -- прораб
+  prx1=1 pry1=1
+  --prx2=1000 pry2=400
+  
   mygamelevel=1  -- начальный уровень
   keyMess=0 -- Для проверки выбора меню
 
@@ -44,9 +48,9 @@ function love.load()
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   Level_font  = love.graphics.newFont("font.ttf", tileSize)  
   -- Картинки
-  TileSetPng=love.graphics.newImage("tilesetgreen3.png")
+  TileSetPng=love.graphics.newImage("tileset.png")
   ArrowsPng=love.graphics.newImage("arrows.png")
- 
+  prorabPng=love.graphics.newImage("prorab2.png") 
   --TileSetPng=love.graphics.newImage("image64.png")
   TileSetPng:setFilter("nearest","linear")
   ----- Вырезаем спрайты игрового поля
@@ -69,11 +73,15 @@ function love.load()
   gamereset(mygamelevel) 
   --  Расчитываем и устанавливаем масштабирование 
   -- Вначале по высоте
-  success = love.window.setFullscreen( true,"desktop" )
+  success = love.window.setFullscreen(true,"desktop" )
   myscale=love.graphics.getHeight()/(16*tileSize)
   -- Если не входит по длине, пересчитываем масштаб
   if (love.graphics.getWidth()/myscale<((19+9+1)*tileSize)) then myscale=love.graphics.getWidth()/((19+9+1)*tileSize) end
   mytranslate = 32 -- Сдвиг экрана вправо для камеры смартфона
+  
+  --rng=love.math.RandomGenerator(os.time())
+  
+  
 end -- End LOAD
 
 --###########################################
@@ -164,10 +172,39 @@ function love.touchpressed( id, tttx, ttty)
  end
 
 
+ -- случайно перемещаем прораба
+function prorab(prx,pry)
+ if rng>500 then 
+   prxk=love.math.random(-1,1) 
+   pryk=love.math.random(-1,1) 
+   rng=0
+ else 
+   rng=rng+1
+ end
+ -- проверка выхода за пределы игрового поля
+ if prx<10  then prx=20   prxk=1  end
+ if prx>love.graphics.getWidth()-tileSize then prx=love.graphics.getWidth()-tileSize  prxk=-1 end
+ if pry<10  then pry=20   pryk=1  end
+ if pry>love.graphics.getHeight()-tileSize then pry=love.graphics.getHeight()-tileSize  pryk=-1 end 
+ -- формируем координаты прораба
+ prx=prx+love.math.random(0,1)*prxk/1 --10
+ pry=pry+love.math.random(0,1)*pryk/1 
+return prx,pry,prxk,pryk
+end -- end prorab
+
+
+
 --################################################################################################## 
 -- Рабочий процесс
 function love.update(dt)
   
+ -- случайно перемещаем прораба
+ prx1,pry1=prorab(prx1,pry1)
+ --prx2,pry2,prxk,pryk=prorab(prx2,pry2,prxk,pryk)
+  
+ 
+ 
+ 
   -- Обработка клавиатуры
   function love.keyreleased(key)
     if (key == "right") then gamekeyevent(1,2,0,0)   kmen=1 end
@@ -206,22 +243,22 @@ function love.draw()
   love.graphics.scale( myscale ) -- Масштабирование всего игрового поля
  love.graphics.translate(mytranslate,0)  -- Сдвиг для камеры смартфона
 
-  love.graphics.setBackgroundColor(16,15,69,255) -- фон
+  love.graphics.setBackgroundColor(255,255,255,255) -- фон
 
   -- Заливаем фон, есть повтор далее :(
-  for myi=1, 16 do
+  --love.graphics.getWidth() yscale=love.graphics.getHeight()/(16*tileSize)
+  for myi=1, love.graphics.getHeight()/tileSize do
     for mxi=0,19 do  -- +9
      love.graphics.draw(TileSetPng,TileQ[11],(mxi-1)*tileSize,(myi-1)*tileSize)
     end
-  end
-  -- Заливаем фон меню
-  for myi=1, 16 do
-    for mxi=19,19+9 do  -- +9
-     love.graphics.draw(TileSetPng,TileQ[12],(mxi-1)*tileSize,(myi-1)*tileSize)
+  end  
+    -- Заливаем фон меню
+  for myi=1,  love.graphics.getHeight()/tileSize do
+    for mxi=20,love.graphics.getWidth()/tileSize do 
+     love.graphics.draw(TileSetPng,TileQ[11],(mxi-1)*tileSize,(myi-1)*tileSize)
     end
   end
-
-
+  
   for myi=1, 16 do
     for mxi=1,19 do
      xblock=(gamepad[myi][mxi]) 
@@ -276,8 +313,7 @@ function love.draw()
   love.graphics.rectangle("line",tkx1,tky2, tkwh, tkwh) -- Вниз
   love.graphics.rectangle("line",tkx0,tky1, tkwh, tkwh) -- ВЛево
   love.graphics.rectangle("line",tkx2,tky1, tkwh, tkwh) -- Вправо
-  
-  -- menu под стрелками
+    -- menu под стрелками
   love.graphics.rectangle("line",tkx0,tky3+tileSize, tkwh, tkwh) -- Левая
   love.graphics.rectangle("line",tkx0+tileSize*skey,tky3+tileSize, tkwh, tkwh) -- Средняя
   love.graphics.rectangle("line",tkx0+tileSize*skey*2,tky3+tileSize, tkwh, tkwh) -- Правая
@@ -285,4 +321,9 @@ function love.draw()
   love.graphics.draw(ArrowsPng,tileSize*19,tileSize*1)
   
   love.graphics.circle("fill",ttx,tty,20)
+  
+    -- прораб
+    love.graphics.draw(prorabPng,prx1,pry1)
+    --love.graphics.draw(prorabPng,prx2,pry2)
+
 end  -- End DRAW
