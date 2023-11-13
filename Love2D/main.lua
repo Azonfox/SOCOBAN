@@ -71,18 +71,27 @@ function love.load()
  
   -- Выставляем уровень изначально
   gamereset(mygamelevel) 
+
+  myscreen() -- Расчитываем экран и масштаб
+  
+  --rng=love.math.RandomGenerator(os.time())
+end -- End LOAD
+
+--###########################################??????????
+function love.resize()
+  myscreen()
+end
+
+--###########################################
   --  Расчитываем и устанавливаем масштабирование 
+function myscreen()
   -- Вначале по высоте
   ---success = love.window.setFullscreen(true,"desktop" )  -- см. CONF.LUA 
   myscale=love.graphics.getHeight()/(16*tileSize)
   -- Если не входит по длине, пересчитываем масштаб
   if (love.graphics.getWidth()/myscale<((19+9+1)*tileSize)) then myscale=love.graphics.getWidth()/((19+9+1)*tileSize) end
   mytranslate = 32 -- Сдвиг экрана вправо для камеры смартфона
-  
-  --rng=love.math.RandomGenerator(os.time())
-  
-  
-end -- End LOAD
+end  
 
 --###########################################
 -- Функция установки игрового уровня по его номеру 
@@ -197,14 +206,11 @@ end -- end prorab
 --################################################################################################## 
 -- Рабочий процесс
 function love.update(dt)
-  
+
  -- случайно перемещаем прораба
  prx1,pry1=prorab(prx1,pry1)
  --prx2,pry2,prxk,pryk=prorab(prx2,pry2,prxk,pryk)
   
- 
- 
- 
   -- Обработка клавиатуры
   function love.keyreleased(key)
     if (key == "right") then gamekeyevent(1,2,0,0)   kmen=1 end
@@ -247,15 +253,16 @@ function love.draw()
 
   -- Заливаем фон, есть повтор далее :(
   --love.graphics.getWidth() yscale=love.graphics.getHeight()/(16*tileSize)
-  for myi=1, love.graphics.getHeight()/tileSize do
-    for mxi=0,19 do  -- +9
-     love.graphics.draw(TileSetPng,TileQ[11],(mxi-1)*tileSize,(myi-1)*tileSize)
+  for myi=1, love.graphics.getHeight()/tileSize/myscale do
+     for mxi=1,love.graphics.getWidth()/tileSize/myscale do 
+    --for mxi=0,19 do  -- +9
+     love.graphics.draw(TileSetPng,TileQ[11],(mxi-2)*tileSize,(myi-1)*tileSize)
     end
   end  
     -- Заливаем фон меню
-  for myi=1,  love.graphics.getHeight()/tileSize do
-    for mxi=20,love.graphics.getWidth()/tileSize do 
-     love.graphics.draw(TileSetPng,TileQ[11],(mxi-1)*tileSize,(myi-1)*tileSize)
+  for myi=1,  love.graphics.getHeight()/tileSize/myscale do
+    for mxi=20,love.graphics.getWidth()/tileSize/myscale do 
+     love.graphics.draw(TileSetPng,TileQ[12],(mxi-1)*tileSize,(myi-1)*tileSize)
     end
   end
   
