@@ -73,7 +73,7 @@ function love.load()
   gamereset(mygamelevel) 
   --  Расчитываем и устанавливаем масштабирование 
   -- Вначале по высоте
-  success = love.window.setFullscreen(true,"desktop" )
+  ---success = love.window.setFullscreen(true,"desktop" )  -- см. CONF.LUA 
   myscale=love.graphics.getHeight()/(16*tileSize)
   -- Если не входит по длине, пересчитываем масштаб
   if (love.graphics.getWidth()/myscale<((19+9+1)*tileSize)) then myscale=love.graphics.getWidth()/((19+9+1)*tileSize) end
