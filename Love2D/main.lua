@@ -1,4 +1,5 @@
-﻿--[[############ SOKOBAN #################
+﻿-- 14-11-2023 HP
+--[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
 2 - цель    |  5 - MEN на свободном поле
@@ -7,8 +8,8 @@
 -- Начальная загрузка
 function love.load()
   --Include
-   require "levels"  -- Все уровни
-     -- require "testlevels" -- Тестовые уровни
+   require "levels"  -- Все рабочие уровни
+   -- require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
   --Переменные
   manx=1 --Координаты игрока XY
@@ -17,25 +18,28 @@ function love.load()
   prx1=1 pry1=1
   --prx2=1000 pry2=400
   
-  mygamelevel=1  -- начальный уровень
+  mygamelevel=1  -- номер начального уровня
   keyMess=0 -- Для проверки выбора меню
 
   TileQ={}  -- Вырезенные спрайты 
   UndoMen={}  -- Таблица UNDO для отката
   xblock=0  -- Считанный байт игрового поля
-  kmen=0    -- для вращения игрока
-  tileSize=32
+  kmen=0    -- для вращения спрайта игрока
+  tileSize=32 -- размер спрайта!
     
   -- Координаты в пикселях поля стрелок управления
-  ttx=1000 --  изначально кружок от пальца не показываем.
-  tty=0
-  skey=3 --размер кнопки смартфона в клетках
-  tkx0=19*tileSize --Начальная точка поля стрелок управления X
+  --  изначально кружок от пальца не показываем.
+  ttx=1000; tty=0;
+  skey=3 --размер кнопки смартфона в клетках игрового поля (tileSize)
+  
+  --Начальная точка поля стрелок управления X
+  tkx0=19*tileSize 
   tkwh=tileSize*skey
   tkx1=tkx0+tkwh 
   tkx2=tkx1+tkwh    
-  tkx3=tkx2+tkwh   
-  tky0=tileSize --Начальная точка поля стрелок управления Y
+  tkx3=tkx2+tkwh  
+  --Начальная точка поля стрелок управления Y
+  tky0=tileSize 
   tky1=tky0+tkwh  
   tky2=tky1+tkwh   
   tky3=tky2+tkwh
@@ -48,47 +52,41 @@ function love.load()
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   Level_font  = love.graphics.newFont("font.ttf", tileSize)  
   -- Картинки
-  TileSetPng=love.graphics.newImage("tileset.png")
+  TileSetPng=love.graphics.newImage("tilesetgreen.png")
   ArrowsPng=love.graphics.newImage("arrows.png")
   prorabPng=love.graphics.newImage("prorab2.png") 
-  --TileSetPng=love.graphics.newImage("image64.png")
   TileSetPng:setFilter("nearest","linear")
-  ----- Вырезаем спрайты игрового поля
-  -- Игровое поле
-  TileQ[0]=love.graphics.newQuad(0*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  TileQ[1]=love.graphics.newQuad(1*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  TileQ[2]=love.graphics.newQuad(2*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  TileQ[3]=love.graphics.newQuad(3*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  TileQ[4]=love.graphics.newQuad(4*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  TileQ[11]=love.graphics.newQuad(5*tileSize,0*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  TileQ[12]=love.graphics.newQuad(5*tileSize,1*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  -- Men
-  TileQ[5]=love.graphics.newQuad(0*tileSize,1*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  TileQ[6]=love.graphics.newQuad(1*tileSize,1*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  TileQ[7]=love.graphics.newQuad(2*tileSize,1*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  TileQ[8]=love.graphics.newQuad(3*tileSize,1*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
-  TileQ[9]=love.graphics.newQuad(4*tileSize,1*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
- 
+  -- Вырезаем спрайты - Игровое поле
+  QuadTile( 0,0,0);  QuadTile( 1,1,0);  QuadTile( 2,2,0) 
+  QuadTile( 3,3,0);  QuadTile( 4,4,0);  QuadTile(11,5,0); 
+  QuadTile(12,5,1); 
+    -- Вырезаем спрайты - Men
+  QuadTile(5,0,1);   QuadTile(6,1,1);   QuadTile(7,2,1); 
+  QuadTile(8,3,1);   QuadTile(9,4,1); 
   -- Выставляем уровень изначально
   gamereset(mygamelevel) 
-
   myscreen() -- Расчитываем экран и масштаб
-  
-  --rng=love.math.RandomGenerator(os.time())
 end -- End LOAD
 
 --###########################################??????????
+-- Функция для удобного сокращения длины записей Quad
+function QuadTile(n,x,y)
+  TileQ[n]=love.graphics.newQuad(x*tileSize,y*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
+end
+
+--###########################################??????????
+-- При изменении окна пересчитываем масштаб
 function love.resize()
   myscreen()
 end
 
 --###########################################
-  --  Расчитываем и устанавливаем масштабирование 
+--  Расчитываем и устанавливаем масштабирование 
 function myscreen()
   -- Вначале по высоте
   ---success = love.window.setFullscreen(true,"desktop" )  -- см. CONF.LUA 
   myscale=love.graphics.getHeight()/(16*tileSize)
-  -- Если не входит по длине, пересчитываем масштаб
+  -- Но если не входит по длине, пересчитываем масштаб
   if (love.graphics.getWidth()/myscale<((19+9+1)*tileSize)) then myscale=love.graphics.getWidth()/((19+9+1)*tileSize) end
   mytranslate = 32 -- Сдвиг экрана вправо для камеры смартфона
 end  
@@ -102,7 +100,6 @@ function gamereset(gamelevel)
   -- Проверка номера уровня
   if gamelevel>maxlevel then gamelevel=maxlevel end
   if gamelevel<1  then gamelevel=1  end
-  
   --Формирование текущего уровня gamepad из mARR
   local adr=(gamelevel-1)*19*16
   gamepad={}
@@ -115,7 +112,9 @@ function gamereset(gamelevel)
     end
    end 
    
--- Замена внешнего поля на фон 
+-- Замена пустого внешнего поля 0  вокруг стен на фон 11
+    -- (при наличии редактора УРОВНЕЙ возможна изначальная прорисовка расширенным трехмерным тайлсетом)
+   -- горизонтально...
    for myi=1,16 do
     for mxi=1,19 do 
       if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=11 else break end 
@@ -124,7 +123,7 @@ function gamereset(gamelevel)
       if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=11 else break end 
     end   
    end    
-
+   -- .. и вертикально
     for mxi=1,19 do
     for myi=1,16 do 
       if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==11) then gamepad[myi][mxi]=11 else break end 
@@ -154,7 +153,7 @@ function gamemenu(menumsg)
 end --end gamemenu
 
 --################################################################################################## 
--- нажатия в смартфоне
+-- Обработка нажатия в смартфоне
 function love.touchpressed( id, tttx, ttty)
   -- переназначаем для показа кружка от пальца.
   -- делаем поправку на Сдвиг экрана вправо 
@@ -172,20 +171,16 @@ function love.touchpressed( id, tttx, ttty)
       if ttx>tkx0 and ttx<tkx1 and tty>tmy1 and tty<tmy2 then  undoload() end
       if ttx>tkx1 and ttx<tkx2 and tty>tmy1 and tty<tmy2 then  gamereset(mygamelevel) end
       if ttx>tkx2 and ttx<tkx3 and tty>tmy1 and tty<tmy2 then  gamemenu("MENU-touch") end
-      --[[
-      -- вывод меню в левом верхнем углу- просто тест 
-      if tty < 100  and ttx<100  then gamemenu("toutch pressed:") end -- menu
-      if tty > 300  and ttx<100  then undoload() end   -- undo  
-      --]]
-      
  end
-
-
+ 
+ --################################################################################################## 
  -- случайно перемещаем прораба
 function prorab(prx,pry)
  if rng>500 then 
    prxk=love.math.random(-1,1) 
    pryk=love.math.random(-1,1) 
+   if prxk==0 then prxk=1 end -- проверка на зависание прораба
+   if pryk==0 then pryk=1 end
    rng=0
  else 
    rng=rng+1
@@ -202,7 +197,6 @@ return prx,pry,prxk,pryk
 end -- end prorab
 
 
-
 --################################################################################################## 
 -- Рабочий процесс
 function love.update(dt)
@@ -211,18 +205,19 @@ function love.update(dt)
  prx1,pry1=prorab(prx1,pry1)
  --prx2,pry2,prxk,pryk=prorab(prx2,pry2,prxk,pryk)
   
-  -- Обработка клавиатуры
+  -- Обработка клавиатуры, но
+  -- в линукс utf8, поэтому берем не буквенные, а управляющие символы
   function love.keyreleased(key)
     if (key == "right") then gamekeyevent(1,2,0,0)   kmen=1 end
     if (key == "left")  then gamekeyevent(-1,-2,0,0) kmen=2 end
     if (key == "down")  then gamekeyevent(0,0,1,2)   kmen=3 end
     if (key == "up")    then gamekeyevent(0,0,-1,-2) kmen=4 end  
     if (key == " " or key == "space")  then  gamemenu("Выберите режим:") end   
-    if (key == "q" and mygamelevel<50) then  
+    if (key == "return" and mygamelevel<50) then  
         mygamelevel=mygamelevel+1
         gamereset(mygamelevel) 
     end    
-    if (key == "z")  then  undoload() end   -- восстанавливаем согласно откату
+    if (key == "f1")  then  undoload() end   -- восстанавливаем согласно откату
     
   end
    
@@ -239,45 +234,45 @@ function love.update(dt)
   end 
   -- Если выигрыш (флаг установлен), то
   if(levelOK==1) then flagOk=flagOk+1 end
-  -- Время красного поля перед Message. Где *dt???
+  -- Время красного поля перед Message. Плохо! Где *dt??????????????????????????????
   if(flagOk==20) then gamemenu("Поздравляем!\nВы\nвыиграли") end
 end -- End UPDATE
   
+  
 --################################################################################################## 
- -- Прорисовка игрового поля
+-- Прорисовка игрового поля
 function love.draw()
   love.graphics.scale( myscale ) -- Масштабирование всего игрового поля
  love.graphics.translate(mytranslate,0)  -- Сдвиг для камеры смартфона
+ -- устанавливаем фон
+ love.graphics.setBackgroundColor(255,255,255,255)
 
-  love.graphics.setBackgroundColor(255,255,255,255) -- фон
-
-  -- Заливаем фон, есть повтор далее :(
-  --love.graphics.getWidth() yscale=love.graphics.getHeight()/(16*tileSize)
-  for myi=1, love.graphics.getHeight()/tileSize/myscale do
-     for mxi=1,love.graphics.getWidth()/tileSize/myscale do 
-    --for mxi=0,19 do  -- +9
-     love.graphics.draw(TileSetPng,TileQ[11],(mxi-2)*tileSize,(myi-1)*tileSize)
+  -- Заливаем фон под игровым полем, 
+  --mxi=1-1 это учитываем пустой столбец слева для камеры смартфона...???
+  for myi=1, love.graphics.getHeight()/tileSize/myscale+1 do
+     for mxi=1-1,love.graphics.getWidth()/tileSize/myscale do 
+        love.graphics.draw(TileSetPng,TileQ[11],(mxi-1)*tileSize,(myi-1)*tileSize)
     end
   end  
-    -- Заливаем фон меню
-  for myi=1,  love.graphics.getHeight()/tileSize/myscale do
+    -- и заливаем фон под меню
+  for myi=1,  love.graphics.getHeight()/tileSize/myscale+1 do
     for mxi=20,love.graphics.getWidth()/tileSize/myscale do 
      love.graphics.draw(TileSetPng,TileQ[12],(mxi-1)*tileSize,(myi-1)*tileSize)
     end
   end
   
+  -- постоянное формирование игрового поля
   for myi=1, 16 do
     for mxi=1,19 do
      xblock=(gamepad[myi][mxi]) 
-    
      if xblock>=5 and  xblock<11 then -- печать игрока:
      -- Подкладываем пол под игрока
       if(xblock==5) then love.graphics.draw(TileSetPng,TileQ[0],(mxi-1)*tileSize,(myi-1)*tileSize) end  
-     -- Подкладываем Х под игрока на поле
+     -- Подкладываем Х (место для ящика) под игрока на поле
       if(xblock==6) then love.graphics.draw(TileSetPng,TileQ[2],(mxi-1)*tileSize,(myi-1)*tileSize) end  
       xblock=5+kmen -- учитываем направление движения
      end
-     -- печать тайла в соответствии с картой
+     -- собственно печать тайла в соответствии с картой
      love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,(myi-1)*tileSize)
    end
   end
@@ -286,7 +281,7 @@ function love.draw()
   love.graphics.setFont( Level_font )
   love.graphics.setColor(0,0,255,255) 
   love.graphics.print("Level  "..mygamelevel, tileSize*20, tileSize*15)
-  
+  -- печать характеристик экрана - размеров и полученного масштаба
   love.graphics.setFont( bungee_font )
   love.graphics.setColor(0,255,0,255) 
   love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*14+10) 
@@ -299,8 +294,7 @@ function love.draw()
   --love.graphics.print("Y="..many, tileSize*20, tileSize*13)
   love.graphics.print("kMes="..keyMess, tileSize*20, tileSize*13)
  
-  
-  -- Вывод UNDO массива в строку
+ -- Вывод UNDO массива в строку
   love.graphics.print(" X_Y__M_+X+___-X-__+Y+__-Y-",tileSize, tileSize*14) 
   for i,v in pairs(UndoMen) do
        love.graphics.print(UndoMen[i], tileSize+i*30, tileSize*15)     
@@ -314,7 +308,6 @@ function love.draw()
   else
     love.graphics.setColor(255,255,255,255)
   end 
-  
   -- Рисуем Стрелки
   love.graphics.rectangle("line",tkx1,tky0, tkwh, tkwh) -- ВВерх
   love.graphics.rectangle("line",tkx1,tky2, tkwh, tkwh) -- Вниз
@@ -324,13 +317,13 @@ function love.draw()
   love.graphics.rectangle("line",tkx0,tky3+tileSize, tkwh, tkwh) -- Левая
   love.graphics.rectangle("line",tkx0+tileSize*skey,tky3+tileSize, tkwh, tkwh) -- Средняя
   love.graphics.rectangle("line",tkx0+tileSize*skey*2,tky3+tileSize, tkwh, tkwh) -- Правая
- 
+  -- картинка стрелок
   love.graphics.draw(ArrowsPng,tileSize*19,tileSize*1)
-  
-  love.graphics.circle("fill",ttx,tty,20)
+  --точка от пальца смартфона
+  love.graphics.circle("fill",ttx,tty,20) 
   
     -- прораб
-    love.graphics.draw(prorabPng,prx1,pry1)
-    --love.graphics.draw(prorabPng,prx2,pry2)
+    love.graphics.draw(prorabPng,prx1,pry1) -- первый прораб
+    --love.graphics.draw(prorabPng,prx2,pry2) --другой прораб
 
 end  -- End DRAW
