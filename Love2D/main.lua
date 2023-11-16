@@ -1,5 +1,6 @@
-﻿-- 15-11-2023 HP
+﻿-- 14-11-2023 HP
 --[[############ SOKOBAN #################
+--############ SOKOBAN ####################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
 2 - цель    |  5 - MEN на свободном поле
@@ -58,11 +59,12 @@ function love.load()
   TileSetPng:setFilter("nearest","linear")
   -- Вырезаем спрайты - Игровое поле
   QuadTile( 0,0,0);  QuadTile( 1,1,0);  QuadTile( 2,2,0) 
-  QuadTile( 3,3,0);  QuadTile( 4,4,0);  QuadTile(11,5,0); 
-  QuadTile(12,5,1); 
+  QuadTile( 3,3,0);  QuadTile( 4,4,0);  QuadTile(21,5,0); 
+  QuadTile(22,6,0); 
     -- Вырезаем спрайты - Men
   QuadTile(5,0,1);   QuadTile(6,1,1);   QuadTile(7,2,1); 
-  QuadTile(8,3,1);   QuadTile(9,4,1); 
+  QuadTile(8,3,1);   QuadTile(9,4,1);   QuadTile(10,5,1);
+  QuadTile(11,6,1);   QuadTile(12,7,1);
   -- Выставляем уровень изначально
   gamereset(mygamelevel) 
   myscreen() -- Расчитываем экран и масштаб
@@ -117,19 +119,19 @@ function gamereset(gamelevel)
    -- горизонтально...
    for myi=1,16 do
     for mxi=1,19 do 
-      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=11 else break end 
+      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=21 else break end 
     end
     for mxi=19,1,-1 do 
-      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=11 else break end 
+      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=21 else break end 
     end   
    end    
    -- .. и вертикально
     for mxi=1,19 do
     for myi=1,16 do 
-      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==11) then gamepad[myi][mxi]=11 else break end 
+      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==21) then gamepad[myi][mxi]=21 else break end 
     end
     for myi=16,1,-1 do 
-      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==11) then gamepad[myi][mxi]=11 else break end 
+      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==21) then gamepad[myi][mxi]=21 else break end 
     end   
    end  
    
@@ -209,10 +211,10 @@ function love.update(dt)
   -- Обработка клавиатуры, но
   -- в линукс utf8, поэтому берем не буквенные, а управляющие символы
   function love.keyreleased(key)
-    if (key == "right") then gamekeyevent(1,2,0,0)   kmen=1 end
-    if (key == "left")  then gamekeyevent(-1,-2,0,0) kmen=2 end
-    if (key == "down")  then gamekeyevent(0,0,1,2)   kmen=3 end
-    if (key == "up")    then gamekeyevent(0,0,-1,-2) kmen=4 end  
+    if (key == "right") then gamekeyevent(1,2,0,0)   kmen=1+3 end
+    if (key == "left")  then gamekeyevent(-1,-2,0,0) kmen=2+3 end
+    if (key == "down")  then gamekeyevent(0,0,1,2)   kmen=0+7 end
+    if (key == "up")    then gamekeyevent(0,0,-1,-2) kmen=3+3 end  
     if (key == " " or key == "space")  then  gamemenu("Выберите режим:") end   
     if (key == "return" and mygamelevel<50) then  
         mygamelevel=mygamelevel+1
@@ -252,13 +254,13 @@ function love.draw()
   --mxi=1-1 это учитываем пустой столбец слева для камеры смартфона...???
   for myi=1, love.graphics.getHeight()/tileSize/myscale+1 do
      for mxi=1-1,love.graphics.getWidth()/tileSize/myscale do 
-        love.graphics.draw(TileSetPng,TileQ[11],(mxi-1)*tileSize,(myi-1)*tileSize)
+        love.graphics.draw(TileSetPng,TileQ[21],(mxi-1)*tileSize,(myi-1)*tileSize)
     end
   end  
     -- и заливаем фон под меню
   for myi=1,  love.graphics.getHeight()/tileSize/myscale+1 do
     for mxi=20,love.graphics.getWidth()/tileSize/myscale do 
-     love.graphics.draw(TileSetPng,TileQ[12],(mxi-1)*tileSize,(myi-1)*tileSize)
+     love.graphics.draw(TileSetPng,TileQ[22],(mxi-1)*tileSize,(myi-1)*tileSize)
     end
   end
   
@@ -322,7 +324,10 @@ function love.draw()
   love.graphics.draw(ArrowsPng,tileSize*19,tileSize*1)
   --точка от пальца смартфона
   love.graphics.circle("fill",ttx,tty,20) 
- 
+    --1 merge diff
+    --2
+    --3
+  
     -- прораб
     love.graphics.draw(prorabPng,prx1,pry1) -- первый прораб
     --love.graphics.draw(prorabPng,prx2,pry2) --другой прораб
