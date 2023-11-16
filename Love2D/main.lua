@@ -1,4 +1,4 @@
-﻿-- 14-11-2023 HP
+﻿-- 15-11-2023 HP
 --[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
@@ -52,7 +52,7 @@ function love.load()
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   Level_font  = love.graphics.newFont("font.ttf", tileSize)  
   -- Картинки
-  TileSetPng=love.graphics.newImage("tilesetgreen.png")
+  TileSetPng=love.graphics.newImage("tileset.png")
   ArrowsPng=love.graphics.newImage("arrows.png")
   prorabPng=love.graphics.newImage("prorab2.png") 
   TileSetPng:setFilter("nearest","linear")
@@ -161,7 +161,8 @@ function love.touchpressed( id, tttx, ttty)
   tty=ttty
   -- Коофициенты несовпадения TOUCH c экраном 
       ttx=ttx/myscale
-      tty=tty/myscale      -- определяем нажатую область как стрелки
+      tty=tty/myscale
+      -- определяем нажатую область как стрелки
       if  ttx>tkx2 and ttx<tkx3 and tty>tky1 and tty<tky2 then gamekeyevent(1,2,0,0)   kmen=1 end -- Right
       if  ttx>tkx0 and ttx<tkx1 and tty>tky1 and tty<tky2 then gamekeyevent(-1,-2,0,0) kmen=2 end -- Left
       if  ttx>tkx1 and ttx<tkx2 and tty>tky2 and tty<tky3 then gamekeyevent(0,0,1,2)   kmen=3 end -- Down
@@ -321,7 +322,7 @@ function love.draw()
   love.graphics.draw(ArrowsPng,tileSize*19,tileSize*1)
   --точка от пальца смартфона
   love.graphics.circle("fill",ttx,tty,20) 
-  
+ 
     -- прораб
     love.graphics.draw(prorabPng,prx1,pry1) -- первый прораб
     --love.graphics.draw(prorabPng,prx2,pry2) --другой прораб
