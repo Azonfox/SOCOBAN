@@ -203,9 +203,7 @@ end -- end prorab
 -- Рабочий процесс
 function love.update(dt)
 
- -- случайно перемещаем прораба
- prx1,pry1=prorab(prx1,pry1)
- --prx2,pry2,prxk,pryk=prorab(prx2,pry2,prxk,pryk)
+   prx1,pry1=prorab(prx1,pry1) -- случайно перемещаем прораба
   
   -- Обработка клавиатуры, но
   -- в линукс utf8, поэтому берем не буквенные, а управляющие символы
@@ -220,6 +218,7 @@ function love.update(dt)
         gamereset(mygamelevel) 
     end    
     if (key == "f1")  then  undoload() end   -- восстанавливаем согласно откату
+    if (key == "f2")  then  gamereset(mygamelevel) end   -- уровень на начало
     
   end
    
@@ -246,14 +245,14 @@ end -- End UPDATE
 function love.draw()
   love.graphics.scale( myscale ) -- Масштабирование всего игрового поля
  love.graphics.translate(mytranslate,0)  -- Сдвиг для камеры смартфона
- -- устанавливаем фон
+ -- устанавливаем фон - зачем?
  love.graphics.setBackgroundColor(255,255,255,255)
 
   -- Заливаем фон под игровым полем, 
   --mxi=1-1 это учитываем пустой столбец слева для камеры смартфона...???
   for myi=1, love.graphics.getHeight()/tileSize/myscale+1 do
      for mxi=1-1,love.graphics.getWidth()/tileSize/myscale do 
-        love.graphics.draw(TileSetPng,TileQ[21],(mxi-1)*tileSize,(myi-1)*tileSize)
+        love.graphics.draw(TileSetPng,TileQ[21],(mxi-1)*tileSize,(myi-1)*(tileSize-3))
     end
   end  
     -- и заливаем фон под меню
