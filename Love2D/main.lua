@@ -1,6 +1,5 @@
 ﻿-- 14-11-2023 HP
 --[[############ SOKOBAN #################
---############ SOKOBAN ####################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
 2 - цель    |  5 - MEN на свободном поле
@@ -55,12 +54,12 @@ function love.load()
   -- Картинки
   TileSetPng=love.graphics.newImage("tileset.png")
   ArrowsPng=love.graphics.newImage("arrows.png")
-  prorabPng=love.graphics.newImage("prorab2.png") 
+  --prorabPng=love.graphics.newImage("prorab2.png") 
   TileSetPng:setFilter("nearest","linear")
   -- Вырезаем спрайты - Игровое поле
   QuadTile( 0,0,0);  QuadTile( 1,1,0);  QuadTile( 2,2,0) 
   QuadTile( 3,3,0);  QuadTile( 4,4,0);  QuadTile(21,5,0); 
-  QuadTile(22,6,0); 
+  QuadTile(22,6,0);  QuadTile(23,7,0);
     -- Вырезаем спрайты - Men
   QuadTile(5,0,1);   QuadTile(6,1,1);   QuadTile(7,2,1); 
   QuadTile(8,3,1);   QuadTile(9,4,1);   QuadTile(10,5,1);
@@ -324,12 +323,8 @@ function love.draw()
   love.graphics.draw(ArrowsPng,tileSize*19,tileSize*1)
   --точка от пальца смартфона
   love.graphics.circle("fill",ttx,tty,20) 
-    --1 merge diff
-    --2
-    --3
   
     -- прораб
-    love.graphics.draw(prorabPng,prx1,pry1) -- первый прораб
-    --love.graphics.draw(prorabPng,prx2,pry2) --другой прораб
+    love.graphics.draw(TileSetPng,TileQ[23],prx1,pry1)
 
 end  -- End DRAW
