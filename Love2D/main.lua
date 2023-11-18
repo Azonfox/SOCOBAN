@@ -11,6 +11,7 @@ function love.load()
    require "levels"  -- Все рабочие уровни
    -- require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
+  love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
   --Переменные
   manx=1 --Координаты игрока XY
   many=1
@@ -54,8 +55,7 @@ function love.load()
   -- Картинки
   TileSetPng=love.graphics.newImage("tileset.png")
   ArrowsPng=love.graphics.newImage("arrows.png")
-  --prorabPng=love.graphics.newImage("prorab2.png") 
-  TileSetPng:setFilter("nearest","linear")
+  --TileSetPng:setFilter("nearest","linear") -- см выше love.graphics.setDefaultFilter
   -- Вырезаем спрайты - Игровое поле
   QuadTile( 0,0,0);  QuadTile( 1,1,0);  QuadTile( 2,2,0) 
   QuadTile( 3,3,0);  QuadTile( 4,4,0);  QuadTile(21,5,0); 
@@ -113,26 +113,29 @@ function gamereset(gamelevel)
     end
    end 
    
--- Замена пустого внешнего поля 0  вокруг стен на фон 11
+   
+   -- Замена пустого внешнего поля 0  вокруг стен на фон 11
     -- (при наличии редактора УРОВНЕЙ возможна изначальная прорисовка расширенным трехмерным тайлсетом)
    -- горизонтально...
+   local codefill=222
    for myi=1,16 do
     for mxi=1,19 do 
-      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=21 else break end 
+      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=codefill else break end 
     end
     for mxi=19,1,-1 do 
-      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=21 else break end 
+      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=codefill else break end 
     end   
    end    
    -- .. и вертикально
     for mxi=1,19 do
     for myi=1,16 do 
-      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==21) then gamepad[myi][mxi]=21 else break end 
+      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) then gamepad[myi][mxi]=codefill else break end 
     end
     for myi=16,1,-1 do 
-      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==21) then gamepad[myi][mxi]=21 else break end 
+      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) then gamepad[myi][mxi]=codefill else break end 
     end   
    end  
+   
    
    -- изначально сохраняем информацию об откате
     undosave()
@@ -208,10 +211,10 @@ function love.update(dt)
   -- Обработка клавиатуры, но
   -- в линукс utf8, поэтому берем не буквенные, а управляющие символы
   function love.keyreleased(key)
-    if (key == "right") then gamekeyevent(1,2,0,0)   kmen=1+3 end
-    if (key == "left")  then gamekeyevent(-1,-2,0,0) kmen=2+3 end
-    if (key == "down")  then gamekeyevent(0,0,1,2)   kmen=0+7 end
-    if (key == "up")    then gamekeyevent(0,0,-1,-2) kmen=3+3 end  
+    if (key == "right") then gamekeyevent(1,2,0,0)   kmen=2 end
+    if (key == "left")  then gamekeyevent(-1,-2,0,0) kmen=3 end
+    if (key == "down")  then gamekeyevent(0,0,1,2)   kmen=0 end
+    if (key == "up")    then gamekeyevent(0,0,-1,-2) kmen=1 end  
     if (key == " " or key == "space")  then  gamemenu("Выберите режим:") end   
     if (key == "return" and mygamelevel<50) then  
         mygamelevel=mygamelevel+1
@@ -246,19 +249,19 @@ function love.draw()
   love.graphics.scale( myscale ) -- Масштабирование всего игрового поля
  love.graphics.translate(mytranslate,0)  -- Сдвиг для камеры смартфона
  -- устанавливаем фон - зачем?
- love.graphics.setBackgroundColor(255,255,255,255)
+ love.graphics.setBackgroundColor(0,0,0,255)
 
   -- Заливаем фон под игровым полем, 
-  --mxi=1-1 это учитываем пустой столбец слева для камеры смартфона...???
-  for myi=1, love.graphics.getHeight()/tileSize/myscale+1 do
-     for mxi=1-1,love.graphics.getWidth()/tileSize/myscale do 
-        love.graphics.draw(TileSetPng,TileQ[21],(mxi-1)*tileSize,(myi-1)*(tileSize-3))
+  --mxi=-1 это учитываем пустой столбец слева для камеры смартфона...???
+  for myi=0, love.graphics.getHeight()/tileSize/myscale do
+     for mxi=-1,love.graphics.getWidth()/tileSize/myscale do 
+        love.graphics.draw(TileSetPng,TileQ[21],(mxi)*tileSize,(myi)*tileSize)
     end
   end  
     -- и заливаем фон под меню
-  for myi=1,  love.graphics.getHeight()/tileSize/myscale+1 do
-    for mxi=20,love.graphics.getWidth()/tileSize/myscale do 
-     love.graphics.draw(TileSetPng,TileQ[22],(mxi-1)*tileSize,(myi-1)*tileSize)
+  for myi=0,  love.graphics.getHeight()/tileSize/myscale do
+    for mxi=19,love.graphics.getWidth()/tileSize/myscale do 
+     love.graphics.draw(TileSetPng,TileQ[22],(mxi)*tileSize,(myi)*tileSize)
     end
   end
   
@@ -274,7 +277,9 @@ function love.draw()
       xblock=5+kmen -- учитываем направление движения
      end
      -- собственно печать тайла в соответствии с картой
-     love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,(myi-1)*tileSize)
+     if xblock<100 then
+      love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,(myi-1)*tileSize)
+     end  
    end
   end
   
