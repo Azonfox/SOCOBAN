@@ -42,8 +42,8 @@ end
 -- Обработка движения
 --###########################################
 function gamekeyevent(kx1,kx2,ky1,ky2)
-  sound1:play() --  играем шаг mena
-  
+ -- sound1:play() --  играем шаг mena
+  rkmen=0 -- изначально ничего не толкаем
   if(manx>1 and manx<19 and many>1 and many<16) then
     
   --1 Стена, упирающийся ящик - нет движения!
@@ -81,6 +81,7 @@ if gamepad[many+ky1][manx+kx1]==3 and gamepad[many+ky2][manx+kx2]==0 then
     many=many+ky1
     gamepad[many][manx]=5
     gamepad[many+ky1][manx+kx1]=3
+    rkmen=4
     goto continue
 end    
  
@@ -91,6 +92,7 @@ if gamepad[many+ky1][manx+kx1]==3 and gamepad[many+ky2][manx+kx2]==2 then
     many=many+ky1
     gamepad[many][manx]=5
     gamepad[many+ky1][manx+kx1]=4
+    rkmen=4
     goto continue
 end    
  
@@ -101,6 +103,7 @@ if gamepad[many+ky1][manx+kx1]==4 and gamepad[many+ky2][manx+kx2]==2 then
     many=many+ky1
     gamepad[many][manx]=6
     gamepad[many+ky1][manx+kx1]=4
+    rkmen=4
     goto continue
 end    
  
@@ -111,6 +114,7 @@ if gamepad[many+ky1][manx+kx1]==4 and gamepad[many+ky2][manx+kx2]==0 then
     many=many+ky1
     gamepad[many][manx]=6
     gamepad[many+ky1][manx+kx1]=3
+    rkmen=4
     goto continue
 end    
 end

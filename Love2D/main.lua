@@ -1,4 +1,4 @@
-﻿-- 14-11-2023 HP
+﻿-- 18-11-2023 HP
 --[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
@@ -9,7 +9,7 @@
 function love.load()
   --Include
    require "levels"  -- Все рабочие уровни
-   -- require "testlevels" -- Тестовые уровни
+   --require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
   love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
   --Переменные
@@ -17,7 +17,6 @@ function love.load()
   many=1
   rng=1 -- прораб
   prx1=1 pry1=1
-  --prx2=1000 pry2=400
   
   mygamelevel=1  -- номер начального уровня
   keyMess=0 -- Для проверки выбора меню
@@ -25,7 +24,8 @@ function love.load()
   TileQ={}  -- Вырезенные спрайты 
   UndoMen={}  -- Таблица UNDO для отката
   xblock=0  -- Считанный байт игрового поля
-  kmen=0    -- для вращения спрайта игрока
+  kmen=0    -- направление игрока
+  rkmen=0   -- не толкающий игрок 
   tileSize=32 -- размер спрайта!
     
   -- Координаты в пикселях поля стрелок управления
@@ -53,7 +53,7 @@ function love.load()
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   Level_font  = love.graphics.newFont("font.ttf", tileSize)  
   -- Картинки
-  TileSetPng=love.graphics.newImage("tileset.png")
+  TileSetPng=love.graphics.newImage("tileset1.png")
   ArrowsPng=love.graphics.newImage("arrows.png")
   --TileSetPng:setFilter("nearest","linear") -- см выше love.graphics.setDefaultFilter
   -- Вырезаем спрайты - Игровое поле
@@ -97,7 +97,7 @@ end
 function gamereset(gamelevel)
   levelOK=0 -- Сброс флага выигрыша
    urad=0 uox=0 uoy=0 -- Сброс поворота игрока
-   kmen=0
+   kmen=0 rkmen=0
   -- Проверка номера уровня
   if gamelevel>maxlevel then gamelevel=maxlevel end
   if gamelevel<1  then gamelevel=1  end
@@ -211,10 +211,10 @@ function love.update(dt)
   -- Обработка клавиатуры, но
   -- в линукс utf8, поэтому берем не буквенные, а управляющие символы
   function love.keyreleased(key)
-    if (key == "right") then gamekeyevent(1,2,0,0)   kmen=2 end
-    if (key == "left")  then gamekeyevent(-1,-2,0,0) kmen=3 end
     if (key == "down")  then gamekeyevent(0,0,1,2)   kmen=0 end
     if (key == "up")    then gamekeyevent(0,0,-1,-2) kmen=1 end  
+    if (key == "right") then gamekeyevent(1,2,0,0)   kmen=2 end
+    if (key == "left")  then gamekeyevent(-1,-2,0,0) kmen=3 end
     if (key == " " or key == "space")  then  gamemenu("Выберите режим:") end   
     if (key == "return" and mygamelevel<50) then  
         mygamelevel=mygamelevel+1
@@ -274,7 +274,7 @@ function love.draw()
       if(xblock==5) then love.graphics.draw(TileSetPng,TileQ[0],(mxi-1)*tileSize,(myi-1)*tileSize) end  
      -- Подкладываем Х (место для ящика) под игрока на поле
       if(xblock==6) then love.graphics.draw(TileSetPng,TileQ[2],(mxi-1)*tileSize,(myi-1)*tileSize) end  
-      xblock=5+kmen -- учитываем направление движения
+      xblock=5+kmen+rkmen -- учитываем направление движения и толкание
      end
      -- собственно печать тайла в соответствии с картой
      if xblock<100 then
