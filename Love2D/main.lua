@@ -8,7 +8,7 @@
 -- Начальная загрузка
 function love.load()
   --Include
-   require "levels"  -- Все рабочие уровни
+  require "levels"  -- Все рабочие уровни
    --require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
   love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
@@ -48,7 +48,9 @@ function love.load()
   tmy1=tky3+tileSize  --Начальная точка поля Menu
   tmy2=tmy1+tkwh   
   -- Звуки
-  sound1=love.audio.newSource("click1.mp3","static")
+  Mstep=love.audio.newSource("step.mp3","static")
+  Mwall=love.audio.newSource("wall.mp3","static")
+  Mbox=love.audio.newSource("box.mp3","static")
   -- Шрифт
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   Level_font  = love.graphics.newFont("font.ttf", tileSize)  

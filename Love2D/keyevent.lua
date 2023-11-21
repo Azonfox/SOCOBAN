@@ -42,16 +42,16 @@ end
 -- Обработка движения
 --###########################################
 function gamekeyevent(kx1,kx2,ky1,ky2)
- -- sound1:play() --  играем шаг mena
+  skmen=0 -- изначально звук шага
   rkmen=0 -- изначально ничего не толкаем
   if(manx>1 and manx<19 and many>1 and many<16) then
-    
+  
   --1 Стена, упирающийся ящик - нет движения!
-if gamepad[many+ky1][manx+kx1]==1 then goto continue end  -- стена
+if gamepad[many+ky1][manx+kx1]==1 then Mwall:play() goto continue end  -- стена
 if gamepad[many+ky1][manx+kx1]==3 and (gamepad[many+ky2][manx+kx2]==4 or gamepad[many+ky2][manx+kx2]==3 or gamepad[many+ky2][manx+kx2]==1) then 
-    goto continue end  -- ящик с упором
+    Mwall:play() goto continue end  -- ящик с упором
 if gamepad[many+ky1][manx+kx1]==4 and (gamepad[many+ky2][manx+kx2]==4 or gamepad[many+ky2][manx+kx2]==3 or gamepad[many+ky2][manx+kx2]==1) then 
-    goto continue end  -- ящик на цели с упором
+    Mwall:play() goto continue end  -- ящик на цели с упором
 
 -- Если движение есть - Сохранить информацию об откате
   undosave()
@@ -62,6 +62,7 @@ if gamepad[many+ky1][manx+kx1]==0 then
     manx=manx+kx1
     many=many+ky1
     gamepad[many][manx]=5
+    Mstep:play() --  играем шаг mena
     goto continue
 end    
     
@@ -71,6 +72,7 @@ if gamepad[many+ky1][manx+kx1]==2 then
     manx=manx+kx1
     many=many+ky1
     gamepad[many][manx]=6
+    Mstep:play() --  играем шаг mena
     goto continue
 end    
 
@@ -82,6 +84,7 @@ if gamepad[many+ky1][manx+kx1]==3 and gamepad[many+ky2][manx+kx2]==0 then
     gamepad[many][manx]=5
     gamepad[many+ky1][manx+kx1]=3
     rkmen=4
+    Mbox:play() --  играем шаг mena
     goto continue
 end    
  
@@ -93,6 +96,7 @@ if gamepad[many+ky1][manx+kx1]==3 and gamepad[many+ky2][manx+kx2]==2 then
     gamepad[many][manx]=5
     gamepad[many+ky1][manx+kx1]=4
     rkmen=4
+    Mbox:play() --  играем шаг mena
     goto continue
 end    
  
@@ -104,6 +108,7 @@ if gamepad[many+ky1][manx+kx1]==4 and gamepad[many+ky2][manx+kx2]==2 then
     gamepad[many][manx]=6
     gamepad[many+ky1][manx+kx1]=4
     rkmen=4
+    Mbox:play() --  играем шаг mena
     goto continue
 end    
  
@@ -115,6 +120,7 @@ if gamepad[many+ky1][manx+kx1]==4 and gamepad[many+ky2][manx+kx2]==0 then
     gamepad[many][manx]=6
     gamepad[many+ky1][manx+kx1]=3
     rkmen=4
+    Mbox:play() --  играем шаг mena
     goto continue
 end    
 end
