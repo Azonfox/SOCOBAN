@@ -15,8 +15,12 @@ function love.load()
   --Переменные
   manx=1 --Координаты игрока XY
   many=1
-  rng=1 -- прораб
-  prx1=1 pry1=1
+  rng=0 -- переход прораба
+  frng=true -- показ прораба
+  timerng=0 -- время бездействия до появления прораба
+  prx1=1 pry1=1 -- начальные координаты прораба
+  
+  --xdt=dt -- для тестирования задержек
   
   mygamelevel=1  -- номер начального уровня
   keyMess=0 -- Для проверки выбора меню
@@ -26,6 +30,7 @@ function love.load()
   xblock=0  -- Считанный байт игрового поля
   kmen=0    -- направление игрока
   rkmen=0   -- не толкающий игрок 
+  xsound=false
   tileSize=32 -- размер спрайта!
     
   -- Координаты в пикселях поля стрелок управления
@@ -203,13 +208,6 @@ function prorab(prx,pry)
 return prx,pry,prxk,pryk
 end -- end prorab
 
-
---################################################################################################## 
--- Рабочий процесс
-function love.update(dt)
-
-   prx1,pry1=prorab(prx1,pry1) -- случайно перемещаем прораба
-  
   -- Обработка клавиатуры, но
   -- в линукс utf8, поэтому берем не буквенные, а управляющие символы
   function love.keyreleased(key)
@@ -226,6 +224,20 @@ function love.update(dt)
     if (key == "f2")  then  gamereset(mygamelevel) end   -- уровень на начало
     
   end
+
+
+
+
+--################################################################################################## 
+-- Рабочий процесс
+function love.update(dt)
+  -- xdt=dt -- test dt
+
+   --при длительном бездействии появляется прораб
+   if timerng<1000 then frng=false timerng=timerng+1
+   else frng=true end
+   prx1,pry1=prorab(prx1,pry1) -- случайно перемещаем прораба
+  
    
   -- Проверка выигрыша - есть ли вообще свободные ящики?
   levelOK=1
@@ -308,7 +320,10 @@ function love.draw()
        love.graphics.print(UndoMen[i], tileSize+i*30, tileSize*15)     
   end
   --]]
-  
+ 
+   --    love.graphics.print(xdt, tileSize*20, tileSize*15)     
+ 
+ 
   -- Если выигрыш то всё красное,
   -- иначе восстанавливаем  цвета
   if(flagOk~=0) then 
@@ -331,6 +346,6 @@ function love.draw()
   love.graphics.circle("fill",ttx,tty,20) 
   
     -- прораб
-    love.graphics.draw(TileSetPng,TileQ[23],prx1,pry1)
+    if frng then love.graphics.draw(TileSetPng,TileQ[23],prx1,pry1) end
 
 end  -- End DRAW
