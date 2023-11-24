@@ -9,7 +9,7 @@
 function love.load()
   --Include
   require "levels"  -- Все рабочие уровни
-   --require "testlevels" -- Тестовые уровни
+  --require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
   love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
   --Переменные
@@ -30,7 +30,7 @@ function love.load()
   xblock=0  -- Считанный байт игрового поля
   kmen=0    -- направление игрока
   rkmen=0   -- не толкающий игрок 
-  xsound=true
+  xsound=true  -- вкл. звуки
   tileSize=32 -- размер спрайта!
     
   -- Координаты в пикселях поля стрелок управления
@@ -60,7 +60,7 @@ function love.load()
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   Level_font  = love.graphics.newFont("font.ttf", tileSize)  
   -- Картинки
-  TileSetPng=love.graphics.newImage("tileset1.png")
+  TileSetPng=love.graphics.newImage("tileset2.png")
   ArrowsPng=love.graphics.newImage("arrows.png")
   --TileSetPng:setFilter("nearest","linear") -- см выше love.graphics.setDefaultFilter
   -- Вырезаем спрайты - Игровое поле
