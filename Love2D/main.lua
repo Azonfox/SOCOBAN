@@ -1,4 +1,4 @@
-﻿-- 18-11-2023 HP
+﻿-- 24-11-2023 HP
 --[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
@@ -20,7 +20,7 @@ function love.load()
   timerng=0 -- время бездействия до появления прораба
   prx1=1 pry1=1 -- начальные координаты прораба
   
-  --xdt=dt -- для тестирования задержек
+  xdt=dt -- для тестирования задержек
   
   mygamelevel=1  -- номер начального уровня
   keyMess=0 -- Для проверки выбора меню
@@ -30,7 +30,7 @@ function love.load()
   xblock=0  -- Считанный байт игрового поля
   kmen=0    -- направление игрока
   rkmen=0   -- не толкающий игрок 
-  xsound=false
+  xsound=true
   tileSize=32 -- размер спрайта!
     
   -- Координаты в пикселях поля стрелок управления
@@ -53,9 +53,9 @@ function love.load()
   tmy1=tky3+tileSize  --Начальная точка поля Menu
   tmy2=tmy1+tkwh   
   -- Звуки
-  Mstep=love.audio.newSource("step.mp3","static")
-  Mwall=love.audio.newSource("wall.mp3","static")
-  Mbox=love.audio.newSource("box.mp3","static")
+  Mstep=love.audio.newSource("step.ogg","static")
+  Mwall=love.audio.newSource("wall.ogg","static")
+  Mbox=love.audio.newSource("box.ogg","static")
   -- Шрифт
   bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   Level_font  = love.graphics.newFont("font.ttf", tileSize)  
@@ -92,7 +92,7 @@ end
 --  Расчитываем и устанавливаем масштабирование 
 function myscreen()
   -- Вначале по высоте
-  ---success = love.window.setFullscreen(true,"desktop" )  -- см. CONF.LUA 
+  --success = love.window.setFullscreen(true,"desktop" )  -- см. CONF.LUA 
   myscale=love.graphics.getHeight()/(16*tileSize)
   -- Но если не входит по длине, пересчитываем масштаб
   if (love.graphics.getWidth()/myscale<((19+9+1)*tileSize)) then myscale=love.graphics.getWidth()/((19+9+1)*tileSize) end
@@ -163,7 +163,7 @@ function gamemenu(menumsg)
     if (mygamelevel<=maxlevel) then gamereset(mygamelevel) end
 end --end gamemenu
 
---################################################################################################## 
+--###########################################
 -- Обработка нажатия в смартфоне
 function love.touchpressed( id, tttx, ttty)
   -- переназначаем для показа кружка от пальца.
@@ -185,7 +185,7 @@ function love.touchpressed( id, tttx, ttty)
       if ttx>tkx2 and ttx<tkx3 and tty>tmy1 and tty<tmy2 then  gamemenu("MENU-touch") end
  end
  
- --################################################################################################## 
+--###########################################
  -- случайно перемещаем прораба
 function prorab(prx,pry)
  if rng>500 then 
@@ -208,6 +208,7 @@ function prorab(prx,pry)
 return prx,pry,prxk,pryk
 end -- end prorab
 
+  --###########################################
   -- Обработка клавиатуры, но
   -- в линукс utf8, поэтому берем не буквенные, а управляющие символы
   function love.keyreleased(key)
@@ -226,12 +227,10 @@ end -- end prorab
   end
 
 
-
-
 --################################################################################################## 
 -- Рабочий процесс
 function love.update(dt)
-  -- xdt=dt -- test dt
+  xdt=math.floor(1/dt) -- test dt
 
    --при длительном бездействии появляется прораб
    if timerng<1000 then frng=false timerng=timerng+1
@@ -255,6 +254,9 @@ function love.update(dt)
   -- Время красного поля перед Message. Плохо! Где *dt??????????????????????????????
   if(flagOk==20) then gamemenu("Поздравляем!\nВы\nвыиграли") end
 end -- End UPDATE
+  
+  
+  
   
   
 --################################################################################################## 
@@ -320,8 +322,8 @@ function love.draw()
        love.graphics.print(UndoMen[i], tileSize+i*30, tileSize*15)     
   end
   --]]
- 
-   --    love.graphics.print(xdt, tileSize*20, tileSize*15)     
+
+      love.graphics.print(xdt, tileSize*25, tileSize*14+10)     
  
  
   -- Если выигрыш то всё красное,
