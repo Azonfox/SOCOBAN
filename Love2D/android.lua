@@ -1,5 +1,6 @@
 android={}
 function android.load()
+  xrighmenu=9+1 -- размер меню справа от игрового поля для ПК
   -- Сдвиг вправо для камеры смартфона
   androidtranslate=tileSize
   -- Координаты в пикселях поля стрелок управления
@@ -37,15 +38,21 @@ function love.touchpressed( id, tttx, ttty)
       ttx=ttx/myscale
       tty=tty/myscale
       -- определяем нажатую область как стрелки
-      if  ttx>tkx2 and ttx<tkx3 and tty>tky1 and tty<tky2 then gamekeyevent(1,2,0,0)   kmen=1 end -- Right
-      if  ttx>tkx0 and ttx<tkx1 and tty>tky1 and tty<tky2 then gamekeyevent(-1,-2,0,0) kmen=2 end -- Left
-      if  ttx>tkx1 and ttx<tkx2 and tty>tky2 and tty<tky3 then gamekeyevent(0,0,1,2)   kmen=3 end -- Down
-      if  ttx>tkx1 and ttx<tkx2 and tty>tky0 and tty<tky1 then gamekeyevent(0,0,-1,-2) kmen=4 end -- UP
+      if  ttx>tkx2 and ttx<tkx3 and tty>tky1 and tty<tky2 
+          then gamekeyevent(1,2,0,0)   kmen=1 end -- Right
+      if  ttx>tkx0 and ttx<tkx1 and tty>tky1 and tty<tky2 
+          then gamekeyevent(-1,-2,0,0) kmen=2 end -- Left
+      if  ttx>tkx1 and ttx<tkx2 and tty>tky2 and tty<tky3 
+          then gamekeyevent(0,0,1,2)   kmen=3 end -- Down
+      if  ttx>tkx1 and ttx<tkx2 and tty>tky0 and tty<tky1 
+          then gamekeyevent(0,0,-1,-2) kmen=4 end -- UP
       --if ttx>tkx0 and ttx<tkx1 and tty>tky3+tky1 and tty<tky3+tky2 then     gamemenu("menumsg") end
       -- Проверка кнопок меню
       if ttx>tkx0 and ttx<tkx1 and tty>tmy1 and tty<tmy2 then  undoload() end
-      if ttx>tkx1 and ttx<tkx2 and tty>tmy1 and tty<tmy2 then  gamereset(mygamelevel) end
-      if ttx>tkx2 and ttx<tkx3 and tty>tmy1 and tty<tmy2 then  gamemenu("MENU-touch") end
+      if ttx>tkx1 and ttx<tkx2 and tty>tmy1 and tty<tmy2 
+          then  gamereset(mygamelevel) end
+      if ttx>tkx2 and ttx<tkx3 and tty>tmy1 and tty<tmy2 
+          then  gamemenu("MENU-touch") end
  end
 
 --###########################################

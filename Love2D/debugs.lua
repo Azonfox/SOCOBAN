@@ -13,7 +13,8 @@ function debugs.show()
 -- печать характеристик экрана - размеров и полученного масштаба
   love.graphics.setFont( status_font )
   love.graphics.setColor(0,255,0,255) 
-  love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*14+10) 
+  love.graphics.print(love.graphics.getWidth().." x "
+      ..love.graphics.getHeight(), tileSize*20, tileSize*14+10) 
   love.graphics.print("scale-"..myscale, tileSize*20, tileSize*10+10) 
   
    --[[

@@ -8,23 +8,26 @@
 -- Начальная загрузка
 function love.load()
   -- Настройки
-  debudsflag=true    -- используем отладку
-  androidflag=true  -- версия для android
-  prorabflag=true  
+  debudsflag=true   -- используем отладку
+  androidflag=false  -- версия для android, ИЛИ
+       pcflag=true  -- версия для ПК
+  prorabflag=true   -- включить прораба в игру
+  xsound=false       -- вкл. звуки
+ 
   --Include
   if androidflag then require "android" end -- дополнения для запуска на смартфоне
+  if pcflag then require "pc" end -- дополнения для запуска на ПК
   if debudsflag  then require "debugs"  end -- дополнения для отладки
   if prorabflag  then require "prorab"  end -- учетчик-контроллер прораб :)
-  
-  
-  require "levels"  -- Все рабочие уровни
-  --require "testlevels" -- Тестовые уровни
+  --require "levels"  -- Все рабочие уровни
+  require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
-  love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
+  require "levcompl"   -- Проверка выигрыша и показ
   
   -- Константы
   tileSize=32    -- размер ячейки и спрайта!
-    
+  --maxlevel находится ф файлах массивов уровней
+  
   --Переменные
   manx=1 --Координаты игрока XY
   many=1
@@ -36,11 +39,14 @@ function love.load()
   xblock=0  -- Считанный байт игрового поля
   kmen=0    -- направление игрока
   rkmen=0   -- не толкающий игрок 
-  xsound=true  -- вкл. звуки
   
   if androidflag then android.load() end
-  if debudsflag then debugs.load() end
-  if prorabflag then prorab.load() end
+  if debudsflag  then debugs.load()  end
+  if prorabflag  then prorab.load()  end
+  if pcflag      then pc.load()      end
+  levcompl.load()
+  
+    love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
   
   -- Звуки
   Mstep=love.audio.newSource("step.ogg","static")
@@ -81,12 +87,13 @@ end
 --###########################################
 --  Расчитываем и устанавливаем масштабирование 
 function myscreen()
-  -- Вначале по высоте
+  -- Вначале расчитываем коофициент по высоте
   --success = love.window.setFullscreen(true,"desktop" )  -- см. CONF.LUA 
+  --love.window.maximize() -- Распахиваем окно на весь экран (навсегда)
   myscale=love.graphics.getHeight()/(16*tileSize)
   -- Но если не входит по длине, пересчитываем масштаб
-  if (love.graphics.getWidth()/myscale<((19+9+1)*tileSize)) then 
-        myscale=love.graphics.getWidth()/((19+9+1)*tileSize) end
+  if (love.graphics.getWidth()/myscale<((19+xrighmenu)*tileSize)) then 
+        myscale=love.graphics.getWidth()/((19+xrighmenu)*tileSize) end
   -- Сдвиг экрана вправо для камеры смартфона 
   if androidflag then mytranslate = androidtranslate else mytranslate=0 end  
 end
@@ -114,7 +121,8 @@ function gamereset(gamelevel)
    
    
    -- Замена пустого внешнего поля 0  вокруг стен на фон 11
-    -- (при наличии редактора УРОВНЕЙ возможна изначальная прорисовка расширенным трехмерным тайлсетом)
+    -- (при наличии редактора УРОВНЕЙ возможна изначальная 
+     ---прорисовка расширенным трехмерным тайлсетом)
    -- горизонтально...
    local codefill=222
    for myi=1,16 do
@@ -128,10 +136,12 @@ function gamereset(gamelevel)
    -- .. и вертикально
     for mxi=1,19 do
     for myi=1,16 do 
-      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) then gamepad[myi][mxi]=codefill else break end 
+      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) 
+         then gamepad[myi][mxi]=codefill else break end 
     end
     for myi=16,1,-1 do 
-      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) then gamepad[myi][mxi]=codefill else break end 
+      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) 
+         then gamepad[myi][mxi]=codefill else break end 
     end   
    end  
     
@@ -142,7 +152,8 @@ end  -- End GAMERESET
 --###########################################
 -- Функция МЕНЮ 
 function gamemenu(menumsg)
-    buttons = {"Выход1","Далее2","Сначала3","Первый4", escapebutton = 1, enterbutton = 4}
+    buttons = {"Выход1","Далее2","Сначала3","Первый4", 
+        escapebutton = 1, enterbutton = 4}
     keyMess=love.window.showMessageBox("SOCOBAN",menumsg,buttons)
     levelOK=0 
     if       keyMess==1 then  love.event.quit()           -- Выход
@@ -153,47 +164,16 @@ function gamemenu(menumsg)
     if (mygamelevel<=maxlevel) then gamereset(mygamelevel) end
 end --end gamemenu
 
-  --###########################################
-  -- Обработка клавиатуры, но
-  -- в линукс utf8, поэтому берем не буквенные, а управляющие символы
-  function love.keyreleased(key)
-    if (key == "down")  then gamekeyevent(0,0,1,2)   kmen=0 end
-    if (key == "up")    then gamekeyevent(0,0,-1,-2) kmen=1 end  
-    if (key == "right") then gamekeyevent(1,2,0,0)   kmen=2 end
-    if (key == "left")  then gamekeyevent(-1,-2,0,0) kmen=3 end
-    if (key == " " or key == "space")  then  gamemenu("Выберите режим:") end   
-    if (key == "return" and mygamelevel<50) then  
-        mygamelevel=mygamelevel+1
-        gamereset(mygamelevel) 
-    end    
-    if (key == "f1")  then  undoload() end   -- восстанавливаем согласно откату
-    if (key == "f2")  then  gamereset(mygamelevel) end   -- уровень на начало
-    
-  end
-
-
+ 
 --################################################################################################## 
 -- Рабочий процесс
 function love.update(dt)
   if debudsflag then debugs.update(dt) end
   if prorabflag then prorab.update(dt) end
     
-  -- Проверка выигрыша - есть ли вообще свободные ящики?
-  levelOK=1
-  for myi=1, 16 do
-   for mxi=1,19 do
-    -- если еще есть, то сбросим флаг
-    if(gamepad[myi][mxi]==3) then 
-        levelOK=0 
-        flagOk=0 
-    end 
-   end
-  end 
-  -- Если выигрыш (флаг установлен), то
-  if(levelOK==1) then flagOk=flagOk+1 end
-  -- Время красного поля перед Message. Плохо! Где *dt??????????????????????????????
-  if(flagOk==20) then gamemenu("Поздравляем!\nВы\nвыиграли") end
-end -- End UPDATE
+  levcompl.update(dt) -- Проверка выигрыша - есть ли вообще свободные ящики? 
+  
+  end -- End UPDATE
   
   
   
@@ -227,33 +207,29 @@ function love.draw()
      xblock=(gamepad[myi][mxi]) 
      if xblock>=5 and  xblock<11 then -- печать игрока:
      -- Подкладываем пол под игрока
-      if(xblock==5) then love.graphics.draw(TileSetPng,TileQ[0],(mxi-1)*tileSize,(myi-1)*tileSize) end  
+      if(xblock==5) then love.graphics.draw(TileSetPng,TileQ[0],
+            (mxi-1)*tileSize,(myi-1)*tileSize) end  
      -- Подкладываем Х (место для ящика) под игрока на поле
-      if(xblock==6) then love.graphics.draw(TileSetPng,TileQ[2],(mxi-1)*tileSize,(myi-1)*tileSize) end  
+      if(xblock==6) then love.graphics.draw(TileSetPng,TileQ[2],
+            (mxi-1)*tileSize,(myi-1)*tileSize) end  
       xblock=5+kmen+rkmen -- учитываем направление движения и толкание
      end
      -- собственно печать тайла в соответствии с картой
      if xblock<100 then
-      love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,(myi-1)*tileSize)
+      love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,
+          (myi-1)*tileSize)
      end  
    end
   end
   
   -- Печать номера уровня голубыми цифрами
   love.graphics.setFont( Level_font )
-  love.graphics.setColor(0,0,255,255) 
+  love.graphics.setColor(0,0,100,255) 
   love.graphics.print("Level  "..mygamelevel, tileSize*20, tileSize*15)
   
   if debudsflag then debugs.show() end
-  
-  -- Если выигрыш то всё красное,
-  -- иначе восстанавливаем  цвета
-  if(flagOk~=0) then 
-    love.graphics.setColor(255,0,0,255)
-  else
-    love.graphics.setColor(255,255,255,255)
-  end 
-  
+  if pcflag then pc.show() end
+  levcompl.show() -- Если выигрыш
   if androidflag then android.show() end -- Рисуем Стрелки >>>>>>>>
   if prorabflag  then prorab.show() end  -- Рисуем Рораба >>>>>>>>>
   
