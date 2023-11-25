@@ -30,6 +30,6 @@ function debugs.show()
        love.graphics.print(UndoMen[i], tileSize+i*30, tileSize*15)     
   end
   --]]
- love.graphics.print(xdt, tileSize*25, tileSize*14+10)     
+ love.graphics.print(xdt, tileSize*24, tileSize*14+10)     
 
 end

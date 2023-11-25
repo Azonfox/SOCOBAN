@@ -19,8 +19,8 @@ function love.load()
   if pcflag then require "pc" end -- дополнения для запуска на ПК
   if debudsflag  then require "debugs"  end -- дополнения для отладки
   if prorabflag  then require "prorab"  end -- учетчик-контроллер прораб :)
-  --require "levels"  -- Все рабочие уровни
-  require "testlevels" -- Тестовые уровни
+  require "levels"  -- Все рабочие уровни
+  --require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
   require "levcompl"   -- Проверка выигрыша и показ
   
@@ -29,6 +29,7 @@ function love.load()
   --maxlevel находится ф файлах массивов уровней
   
   --Переменные
+  countstep=0 --  проделано шагов
   manx=1 --Координаты игрока XY
   many=1
   mygamelevel=1  -- номер начального уровня
@@ -101,6 +102,7 @@ end
 --###########################################
 -- Функция установки игрового уровня по его номеру 
 function gamereset(gamelevel)
+  countstep=0 -- сброс счетчика шагов
   levelOK=0 -- Сброс флага выигрыша
    urad=0 uox=0 uoy=0 -- Сброс поворота игрока
    kmen=0 rkmen=0
@@ -222,15 +224,22 @@ function love.draw()
    end
   end
   
+  
+  -- Печать счетчика шагов
+  love.graphics.setFont( status_font )
+  love.graphics.setColor(255,0,0,255) 
+  love.graphics.print("Steps  "..countstep, tileSize*19+10, tileSize*0)
+  
+  
   -- Печать номера уровня голубыми цифрами
   love.graphics.setFont( Level_font )
-  love.graphics.setColor(0,0,100,255) 
-  love.graphics.print("Level  "..mygamelevel, tileSize*20, tileSize*15)
+  love.graphics.setColor(255,0,0,255) 
+  love.graphics.print("Level  "..mygamelevel, tileSize*19+10, tileSize*15)
   
   if debudsflag then debugs.show() end
   if pcflag then pc.show() end
   levcompl.show() -- Если выигрыш
   if androidflag then android.show() end -- Рисуем Стрелки >>>>>>>>
-  if prorabflag  then prorab.show() end  -- Рисуем Рораба >>>>>>>>>
+  if prorabflag  then prorab.show() end  -- Рисуем Прораба >>>>>>>>
   
 end  -- End DRAW

@@ -42,7 +42,7 @@ end
 -- Обработка движения
 --###########################################
 function gamekeyevent(kx1,kx2,ky1,ky2)
-  skmen=0 -- изначально звук шага
+  --skmen=0 -- изначально звук шага
   rkmen=0 -- изначально ничего не толкаем
   frng=false timerng=0 -- при нажатии прораб исчезает
   if(manx>1 and manx<19 and many>1 and many<16) then
@@ -54,8 +54,9 @@ if gamepad[many+ky1][manx+kx1]==3 and (gamepad[many+ky2][manx+kx2]==4 or gamepad
 if gamepad[many+ky1][manx+kx1]==4 and (gamepad[many+ky2][manx+kx2]==4 or gamepad[many+ky2][manx+kx2]==3 or gamepad[many+ky2][manx+kx2]==1) then 
     if xsound then Mwall:play() end goto continue end  -- ящик на цели с упором
 
--- Если движение есть - Сохранить информацию об откате
-  undosave()
+
+  undosave() -- Если движение есть - Сохранить информацию об откате
+  countstep=countstep+1 -- Если движение есть - считаем шаги
 
 --2 -движение свободное - поле
 if gamepad[many+ky1][manx+kx1]==0 then 

@@ -11,6 +11,7 @@ function prorab.update(dt)
    --при длительном бездействии появляется прораб
    if timerng<1000 then frng=false timerng=timerng+1
    else frng=true end
+  if compliteflag then frng=false end
    prx1,pry1=prorab.run(prx1,pry1) -- случайно перемещаем прораба
 end
 
