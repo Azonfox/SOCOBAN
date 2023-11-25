@@ -1,4 +1,4 @@
-﻿-- 24-11-2023 HP
+﻿-- 25-11-2023 HP
 --[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
@@ -7,21 +7,27 @@
 --################################################################################################## 
 -- Начальная загрузка
 function love.load()
+  -- Настройки
+  debudsflag=true    -- используем отладку
+  androidflag=true  -- версия для android
+  prorabflag=true  
   --Include
+  if androidflag then require "android" end -- дополнения для запуска на смартфоне
+  if debudsflag  then require "debugs"  end -- дополнения для отладки
+  if prorabflag  then require "prorab"  end -- учетчик-контроллер прораб :)
+  
+  
   require "levels"  -- Все рабочие уровни
   --require "testlevels" -- Тестовые уровни
   require "keyevent"   -- Движения игрока
   love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
+  
+  -- Константы
+  tileSize=32    -- размер ячейки и спрайта!
+    
   --Переменные
   manx=1 --Координаты игрока XY
   many=1
-  rng=0 -- переход прораба
-  frng=true -- показ прораба
-  timerng=0 -- время бездействия до появления прораба
-  prx1=1 pry1=1 -- начальные координаты прораба
-  
-  xdt=dt -- для тестирования задержек
-  
   mygamelevel=1  -- номер начального уровня
   keyMess=0 -- Для проверки выбора меню
 
@@ -31,37 +37,20 @@ function love.load()
   kmen=0    -- направление игрока
   rkmen=0   -- не толкающий игрок 
   xsound=true  -- вкл. звуки
-  tileSize=32 -- размер спрайта!
-    
-  -- Координаты в пикселях поля стрелок управления
-  --  изначально кружок от пальца не показываем.
-  ttx=1000; tty=0;
-  skey=3 --размер кнопки смартфона в клетках игрового поля (tileSize)
   
-  --Начальная точка поля стрелок управления X
-  tkx0=19*tileSize 
-  tkwh=tileSize*skey
-  tkx1=tkx0+tkwh 
-  tkx2=tkx1+tkwh    
-  tkx3=tkx2+tkwh  
-  --Начальная точка поля стрелок управления Y
-  tky0=tileSize 
-  tky1=tky0+tkwh  
-  tky2=tky1+tkwh   
-  tky3=tky2+tkwh
+  if androidflag then android.load() end
+  if debudsflag then debugs.load() end
+  if prorabflag then prorab.load() end
   
-  tmy1=tky3+tileSize  --Начальная точка поля Menu
-  tmy2=tmy1+tkwh   
   -- Звуки
   Mstep=love.audio.newSource("step.ogg","static")
   Mwall=love.audio.newSource("wall.ogg","static")
   Mbox=love.audio.newSource("box.ogg","static")
   -- Шрифт
-  bungee_font = love.graphics.newFont("font.ttf", tileSize/2 )  
+  status_font = love.graphics.newFont("font.ttf", tileSize/2 )  
   Level_font  = love.graphics.newFont("font.ttf", tileSize)  
   -- Картинки
   TileSetPng=love.graphics.newImage("tileset2.png")
-  ArrowsPng=love.graphics.newImage("arrows.png")
   --TileSetPng:setFilter("nearest","linear") -- см выше love.graphics.setDefaultFilter
   -- Вырезаем спрайты - Игровое поле
   QuadTile( 0,0,0);  QuadTile( 1,1,0);  QuadTile( 2,2,0) 
@@ -79,7 +68,8 @@ end -- End LOAD
 --###########################################??????????
 -- Функция для удобного сокращения длины записей Quad
 function QuadTile(n,x,y)
-  TileQ[n]=love.graphics.newQuad(x*tileSize,y*tileSize,tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
+  TileQ[n]=love.graphics.newQuad(x*tileSize,y*tileSize,
+    tileSize,tileSize,TileSetPng:getWidth(),TileSetPng:getHeight())
 end
 
 --###########################################??????????
@@ -95,9 +85,11 @@ function myscreen()
   --success = love.window.setFullscreen(true,"desktop" )  -- см. CONF.LUA 
   myscale=love.graphics.getHeight()/(16*tileSize)
   -- Но если не входит по длине, пересчитываем масштаб
-  if (love.graphics.getWidth()/myscale<((19+9+1)*tileSize)) then myscale=love.graphics.getWidth()/((19+9+1)*tileSize) end
-  mytranslate = 32 -- Сдвиг экрана вправо для камеры смартфона
-end  
+  if (love.graphics.getWidth()/myscale<((19+9+1)*tileSize)) then 
+        myscale=love.graphics.getWidth()/((19+9+1)*tileSize) end
+  -- Сдвиг экрана вправо для камеры смартфона 
+  if androidflag then mytranslate = androidtranslate else mytranslate=0 end  
+end
 
 --###########################################
 -- Функция установки игрового уровня по его номеру 
@@ -142,11 +134,9 @@ function gamereset(gamelevel)
       if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) then gamepad[myi][mxi]=codefill else break end 
     end   
    end  
-   
-   
-   -- изначально сохраняем информацию об откате
+    
+    -- изначально сохраняем информацию об откате
     undosave()
-   
 end  -- End GAMERESET
 
 --###########################################
@@ -162,51 +152,6 @@ function gamemenu(menumsg)
     end
     if (mygamelevel<=maxlevel) then gamereset(mygamelevel) end
 end --end gamemenu
-
---###########################################
--- Обработка нажатия в смартфоне
-function love.touchpressed( id, tttx, ttty)
-  -- переназначаем для показа кружка от пальца.
-  -- делаем поправку на Сдвиг экрана вправо 
-  ttx=tttx-mytranslate
-  tty=ttty
-  -- Коофициенты несовпадения TOUCH c экраном 
-      ttx=ttx/myscale
-      tty=tty/myscale
-      -- определяем нажатую область как стрелки
-      if  ttx>tkx2 and ttx<tkx3 and tty>tky1 and tty<tky2 then gamekeyevent(1,2,0,0)   kmen=1 end -- Right
-      if  ttx>tkx0 and ttx<tkx1 and tty>tky1 and tty<tky2 then gamekeyevent(-1,-2,0,0) kmen=2 end -- Left
-      if  ttx>tkx1 and ttx<tkx2 and tty>tky2 and tty<tky3 then gamekeyevent(0,0,1,2)   kmen=3 end -- Down
-      if  ttx>tkx1 and ttx<tkx2 and tty>tky0 and tty<tky1 then gamekeyevent(0,0,-1,-2) kmen=4 end -- UP
-      --if ttx>tkx0 and ttx<tkx1 and tty>tky3+tky1 and tty<tky3+tky2 then     gamemenu("menumsg") end
-      -- Проверка кнопок меню
-      if ttx>tkx0 and ttx<tkx1 and tty>tmy1 and tty<tmy2 then  undoload() end
-      if ttx>tkx1 and ttx<tkx2 and tty>tmy1 and tty<tmy2 then  gamereset(mygamelevel) end
-      if ttx>tkx2 and ttx<tkx3 and tty>tmy1 and tty<tmy2 then  gamemenu("MENU-touch") end
- end
- 
---###########################################
- -- случайно перемещаем прораба
-function prorab(prx,pry)
- if rng>500 then 
-   prxk=love.math.random(-1,1) 
-   pryk=love.math.random(-1,1) 
-   if prxk==0 then prxk=1 end -- проверка на зависание прораба
-   if pryk==0 then pryk=1 end
-   rng=0
- else 
-   rng=rng+1
- end
- -- проверка выхода за пределы игрового поля
- if prx<10  then prx=20   prxk=1  end
- if prx>love.graphics.getWidth()-tileSize then prx=love.graphics.getWidth()-tileSize  prxk=-1 end
- if pry<10  then pry=20   pryk=1  end
- if pry>love.graphics.getHeight()-tileSize then pry=love.graphics.getHeight()-tileSize  pryk=-1 end 
- -- формируем координаты прораба
- prx=prx+love.math.random(0,1)*prxk/1 --10
- pry=pry+love.math.random(0,1)*pryk/1 
-return prx,pry,prxk,pryk
-end -- end prorab
 
   --###########################################
   -- Обработка клавиатуры, но
@@ -230,14 +175,9 @@ end -- end prorab
 --################################################################################################## 
 -- Рабочий процесс
 function love.update(dt)
-  xdt=math.floor(1/dt) -- test dt
-
-   --при длительном бездействии появляется прораб
-   if timerng<1000 then frng=false timerng=timerng+1
-   else frng=true end
-   prx1,pry1=prorab(prx1,pry1) -- случайно перемещаем прораба
-  
-   
+  if debudsflag then debugs.update(dt) end
+  if prorabflag then prorab.update(dt) end
+    
   -- Проверка выигрыша - есть ли вообще свободные ящики?
   levelOK=1
   for myi=1, 16 do
@@ -303,29 +243,9 @@ function love.draw()
   love.graphics.setFont( Level_font )
   love.graphics.setColor(0,0,255,255) 
   love.graphics.print("Level  "..mygamelevel, tileSize*20, tileSize*15)
-  -- печать характеристик экрана - размеров и полученного масштаба
-  love.graphics.setFont( bungee_font )
-  love.graphics.setColor(0,255,0,255) 
-  love.graphics.print(love.graphics.getWidth().." x "..love.graphics.getHeight(), tileSize*20, tileSize*14+10) 
-  love.graphics.print("sc-"..myscale, tileSize*20, tileSize*10+10) 
   
-   --[[
- -- Отладка Печать Y ---------------------------------------------------------------------
-  love.graphics.setFont( bungee_font )
-  love.graphics.setColor(0,255,0,255) 
-  --love.graphics.print("Y="..many, tileSize*20, tileSize*13)
-  love.graphics.print("kMes="..keyMess, tileSize*20, tileSize*13)
- 
- -- Вывод UNDO массива в строку
-  love.graphics.print(" X_Y__M_+X+___-X-__+Y+__-Y-",tileSize, tileSize*14) 
-  for i,v in pairs(UndoMen) do
-       love.graphics.print(UndoMen[i], tileSize+i*30, tileSize*15)     
-  end
-  --]]
-
-      love.graphics.print(xdt, tileSize*25, tileSize*14+10)     
- 
- 
+  if debudsflag then debugs.show() end
+  
   -- Если выигрыш то всё красное,
   -- иначе восстанавливаем  цвета
   if(flagOk~=0) then 
@@ -333,21 +253,8 @@ function love.draw()
   else
     love.graphics.setColor(255,255,255,255)
   end 
-  -- Рисуем Стрелки
-  love.graphics.rectangle("line",tkx1,tky0, tkwh, tkwh) -- ВВерх
-  love.graphics.rectangle("line",tkx1,tky2, tkwh, tkwh) -- Вниз
-  love.graphics.rectangle("line",tkx0,tky1, tkwh, tkwh) -- ВЛево
-  love.graphics.rectangle("line",tkx2,tky1, tkwh, tkwh) -- Вправо
-    -- menu под стрелками
-  love.graphics.rectangle("line",tkx0,tky3+tileSize, tkwh, tkwh) -- Левая
-  love.graphics.rectangle("line",tkx0+tileSize*skey,tky3+tileSize, tkwh, tkwh) -- Средняя
-  love.graphics.rectangle("line",tkx0+tileSize*skey*2,tky3+tileSize, tkwh, tkwh) -- Правая
-  -- картинка стрелок
-  love.graphics.draw(ArrowsPng,tileSize*19,tileSize*1)
-  --точка от пальца смартфона
-  love.graphics.circle("fill",ttx,tty,20) 
   
-    -- прораб
-    if frng then love.graphics.draw(TileSetPng,TileQ[23],prx1,pry1) end
-
+  if androidflag then android.show() end -- Рисуем Стрелки >>>>>>>>
+  if prorabflag  then prorab.show() end  -- Рисуем Рораба >>>>>>>>>
+  
 end  -- End DRAW
