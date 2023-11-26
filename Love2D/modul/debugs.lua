@@ -10,13 +10,14 @@ function debugs.update(dt)
 end
 
 function debugs.show()
--- печать характеристик экрана - размеров и полученного масштаба
+-- печать отладочной инфоормации
   love.graphics.setFont( status_font )
   love.graphics.setColor(0,255,0,255) 
+  love.graphics.print("Scale-"..myscale, tileSize*19+10, tileSize*14) 
+  love.graphics.print("FPS-"..xdt, tileSize*22, tileSize*14)     
   love.graphics.print(love.graphics.getWidth().." x "
-      ..love.graphics.getHeight(), tileSize*20, tileSize*14+10) 
-  love.graphics.print("scale-"..myscale, tileSize*20, tileSize*10+10) 
-  
+      ..love.graphics.getHeight(), tileSize*19+10, tileSize*14+16) 
+ 
    --[[
  -- Отладка Печать Y ---------------------------------------------------------------------
   love.graphics.setFont( bungee_font )
@@ -30,6 +31,5 @@ function debugs.show()
        love.graphics.print(UndoMen[i], tileSize+i*30, tileSize*15)     
   end
   --]]
- love.graphics.print(xdt, tileSize*24, tileSize*14+10)     
-
+ 
 end

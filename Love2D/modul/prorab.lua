@@ -4,7 +4,6 @@ function prorab.load()
   frng=true -- флаг показа прораба
   timerng=0 -- время бездействия до появления прораба
   prx1=1 pry1=1 -- начальные координаты прораба
-  
 end
 
 function prorab.update(dt)

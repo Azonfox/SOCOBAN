@@ -42,7 +42,6 @@ end
 -- Обработка движения
 --###########################################
 function gamekeyevent(kx1,kx2,ky1,ky2)
-  --skmen=0 -- изначально звук шага
   rkmen=0 -- изначально ничего не толкаем
   frng=false timerng=0 -- при нажатии прораб исчезает
   if(manx>1 and manx<19 and many>1 and many<16) then

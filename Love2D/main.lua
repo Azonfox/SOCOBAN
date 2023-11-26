@@ -1,4 +1,4 @@
-﻿-- 25-11-2023 HP
+﻿-- 26-11-2023 HP
 --[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
@@ -15,14 +15,15 @@ function love.load()
   xsound=false       -- вкл. звуки
  
   --Include
-  if androidflag then require "android" end -- дополнения для запуска на смартфоне
-  if pcflag then require "pc" end -- дополнения для запуска на ПК
-  if debudsflag  then require "debugs"  end -- дополнения для отладки
-  if prorabflag  then require "prorab"  end -- учетчик-контроллер прораб :)
-  require "levels"  -- Все рабочие уровни
-  --require "testlevels" -- Тестовые уровни
-  require "keyevent"   -- Движения игрока
-  require "levcompl"   -- Проверка выигрыша и показ
+  if androidflag then require "modul/android" end -- дополнения для запуска на смартфоне
+  if pcflag then require "modul/pc" end -- дополнения для запуска на ПК
+  if debudsflag  then require "modul/debugs"  end -- дополнения для отладки
+  if prorabflag  then require "modul/prorab"  end -- учетчик-контроллер прораб :)
+  require "modul/levels"  -- Все рабочие уровни
+  --require "modul/testlevels" -- Тестовые уровни
+  require "modul/keyevent"   -- Движения игрока
+  require "modul/levcompl"   -- Проверка выигрыша и показ
+  --Timer=require "lib/hump/timer"   -- Библиотека таймера
   
   -- Константы
   tileSize=32    -- размер ячейки и спрайта!
@@ -38,7 +39,7 @@ function love.load()
   TileQ={}  -- Вырезенные спрайты 
   UndoMen={}  -- Таблица UNDO для отката
   xblock=0  -- Считанный байт игрового поля
-  kmen=0    -- направление игрока
+  kmen=0    -- направление игрока вниз
   rkmen=0   -- не толкающий игрок 
   
   if androidflag then android.load() end
@@ -47,17 +48,18 @@ function love.load()
   if pcflag      then pc.load()      end
   levcompl.load()
   
-    love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
+  love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
   
   -- Звуки
-  Mstep=love.audio.newSource("step.ogg","static")
-  Mwall=love.audio.newSource("wall.ogg","static")
-  Mbox=love.audio.newSource("box.ogg","static")
+  Mstep=love.audio.newSource("sound/step.ogg","static")
+  Mwall=love.audio.newSource("sound/wall.ogg","static")
+  Mbox=love.audio.newSource("sound/box.ogg","static")
+  Lgong=love.audio.newSource("sound/gong.ogg","static")
   -- Шрифт
-  status_font = love.graphics.newFont("font.ttf", tileSize/2 )  
-  Level_font  = love.graphics.newFont("font.ttf", tileSize)  
+  status_font = love.graphics.newFont("font/font.ttf", tileSize/2 )  
+  Level_font  = love.graphics.newFont("font/font.ttf", tileSize)  
   -- Картинки
-  TileSetPng=love.graphics.newImage("tileset2.png")
+  TileSetPng=love.graphics.newImage("image/tileset3.png")
   --TileSetPng:setFilter("nearest","linear") -- см выше love.graphics.setDefaultFilter
   -- Вырезаем спрайты - Игровое поле
   QuadTile( 0,0,0);  QuadTile( 1,1,0);  QuadTile( 2,2,0) 
@@ -70,6 +72,9 @@ function love.load()
   -- Выставляем уровень изначально
   gamereset(mygamelevel) 
   myscreen() -- Расчитываем экран и масштаб
+  
+  --timer = Timer() -- включить чужой таймер hump
+  
 end -- End LOAD
 
 --###########################################??????????
@@ -124,7 +129,8 @@ function gamereset(gamelevel)
    
    -- Замена пустого внешнего поля 0  вокруг стен на фон 11
     -- (при наличии редактора УРОВНЕЙ возможна изначальная 
-     ---прорисовка расширенным трехмерным тайлсетом)
+     ---прорисовка расширенным трехмерным тайлсетом) 
+     -- или подготовить все уровни заранее...
    -- горизонтально...
    local codefill=222
    for myi=1,16 do
@@ -146,16 +152,15 @@ function gamereset(gamelevel)
          then gamepad[myi][mxi]=codefill else break end 
     end   
    end  
-    
     -- изначально сохраняем информацию об откате
     undosave()
 end  -- End GAMERESET
 
 --###########################################
--- Функция МЕНЮ 
+-- Функция МЕНЮ - заменить на графическое окно
 function gamemenu(menumsg)
     buttons = {"Выход1","Далее2","Сначала3","Первый4", 
-        escapebutton = 1, enterbutton = 4}
+    escapebutton = 1, enterbutton = 4}
     keyMess=love.window.showMessageBox("SOCOBAN",menumsg,buttons)
     levelOK=0 
     if       keyMess==1 then  love.event.quit()           -- Выход
@@ -189,8 +194,7 @@ function love.draw()
  -- устанавливаем фон - зачем?
  love.graphics.setBackgroundColor(0,0,0,255)
 
-  -- Заливаем фон под игровым полем, 
-  --mxi=-1 это учитываем пустой столбец слева для камеры смартфона...???
+  -- Заливаем фон под игровым полем
   for myi=0, love.graphics.getHeight()/tileSize/myscale do
      for mxi=-1,love.graphics.getWidth()/tileSize/myscale do 
         love.graphics.draw(TileSetPng,TileQ[21],(mxi)*tileSize,(myi)*tileSize)
@@ -224,22 +228,19 @@ function love.draw()
    end
   end
   
-  
-  -- Печать счетчика шагов
+    -- Печать счетчика шагов - вверху?
   love.graphics.setFont( status_font )
-  love.graphics.setColor(255,0,0,255) 
+  love.graphics.setColor(255,0,100,255) 
   love.graphics.print("Steps  "..countstep, tileSize*19+10, tileSize*0)
-  
-  
   -- Печать номера уровня голубыми цифрами
   love.graphics.setFont( Level_font )
-  love.graphics.setColor(255,0,0,255) 
+  love.graphics.setColor(255,0,100,255) 
   love.graphics.print("Level  "..mygamelevel, tileSize*19+10, tileSize*15)
-  
-  if debudsflag then debugs.show() end
-  if pcflag then pc.show() end
-  levcompl.show() -- Если выигрыш
-  if androidflag then android.show() end -- Рисуем Стрелки >>>>>>>>
-  if prorabflag  then prorab.show() end  -- Рисуем Прораба >>>>>>>>
+  -- Печать модулей
+  if debudsflag then debugs.show() end -- Отладочная информация
+  if pcflag then pc.show() end  -- Отличия для ПК
+  levcompl.show() -- Если выигрыш. Вызываем именно отсюда!
+  if androidflag then android.show() end -- Отличия для смартфона
+  if prorabflag  then prorab.show() end  -- Рисуем полет Прораба 
   
 end  -- End DRAW

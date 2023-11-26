@@ -23,7 +23,7 @@ function android.load()
   tmy1=tky3+tileSize  --Начальная точка поля Menu
   tmy2=tmy1+tkwh   
     -- картинки
-    ArrowsPng=love.graphics.newImage("arrows.png")
+    ArrowsPng=love.graphics.newImage("image/arrows.png")
 end
 
 
