@@ -1,6 +1,7 @@
 debugs={}
 
 function debugs.load()
+  Debugs_font  = love.graphics.newFont("font/font.ttf", tileSize/2)  
   xdt=0.02 -- для тестирования задержек
 end
 
@@ -11,12 +12,12 @@ end
 
 function debugs.show()
 -- печать отладочной инфоормации
-  love.graphics.setFont( status_font )
+  love.graphics.setFont( Debugs_font )
   love.graphics.setColor(0,255,0,255) 
-  love.graphics.print("Scale-"..myscale, tileSize*19+10, tileSize*14) 
-  love.graphics.print("FPS-"..xdt, tileSize*22, tileSize*14)     
+  love.graphics.print("Scale-"..myscale, tileSize*19+10, tileSize*13) 
+  love.graphics.print("FPS-"..xdt, tileSize*23, tileSize*13+16)     
   love.graphics.print(love.graphics.getWidth().." x "
-      ..love.graphics.getHeight(), tileSize*19+10, tileSize*14+16) 
+      ..love.graphics.getHeight(), tileSize*19+10, tileSize*13+16) 
  
    --[[
  -- Отладка Печать Y ---------------------------------------------------------------------

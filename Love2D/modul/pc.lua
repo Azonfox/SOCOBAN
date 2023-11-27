@@ -11,11 +11,10 @@ function pc.update(dt)
 end
 
 function pc.show()
-  local textx=19
   -- Печать справки по клавишам
-  love.graphics.setColor(100,100,0,255)
+  local textx=19
+  love.graphics.setColor(0,0,0,255)
   love.graphics.setFont( Help_font )
-  
   local helpmess={
     "F1-MENU",
     "F3-NEXT",

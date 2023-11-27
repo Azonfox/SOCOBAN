@@ -11,8 +11,6 @@ end
 -- Настройки расширенные
 gw = 800 --896+32   -- Базовое разрешение
 gh = 512  
----sx = 1        -- Базовый масштаб
----sy = 1 
  
 function love.conf(t) 
     t.identity = nil                   -- Имя папки сохранения (строка) 
@@ -36,20 +34,20 @@ function love.conf(t)
     t.window.srgb = false              -- Включение гамма-коррекции sRGB при отрисовке на экране (boolean) 
     t.window.x = nil                   -- Координата x позиции окна на указанном дисплее (число) 
     t.window.y = nil                   -- Координата y позиции окна на указанном дисплее (число) 
-   -- Подключение модулей
+   -- Подключение модулей - изначально все true
     t.modules.audio = true      -- Включение аудиомодуля (boolean) 
     t.modules.event = true      -- Включение модуля событий (boolean) 
     t.modules.graphics = true   -- Включение модуля графики (boolean) 
     t.modules.image = true      -- Включение модуля изображений (boolean) 
-    t.modules.joystick = true   -- Включение модуля джойстика (boolean) 
+    t.modules.joystick = false   -- Включение модуля джойстика (boolean) 
     t.modules.keyboard = true   -- Включение модуля клавиатуры (boolean) 
     t.modules.math = true       -- Включение модуля математики (boolean) 
     t.modules.mouse = true      -- Включение модуля мыши (boolean) 
-    t.modules.physics = true    -- Включение модуля физики (boolean) 
+    t.modules.physics = false    -- Включение модуля физики (boolean) 
     t.modules.sound = true      -- Включение модуля звука (boolean) 
     t.modules.system = true     -- Включение модуля системы (boolean) 
     t.modules.timer = true      -- Включение модуля таймера (boolean), при его отключении 0 delta time в love.update будет иметь значение 0 
     t.modules.window = true     -- Включение модуля окон (boolean) 
-    t.modules.thread = true     -- Включение модуля потоков (boolean) 
+    t.modules.thread = false     -- Включение модуля потоков (boolean)  - HTML5 не работает?
 end 
  

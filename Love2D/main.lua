@@ -1,4 +1,4 @@
-﻿-- 26-11-2023 HP
+﻿-- 27-11-2023 HP
 --[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
@@ -19,8 +19,8 @@ function love.load()
   if pcflag then require "modul/pc" end -- дополнения для запуска на ПК
   if debudsflag  then require "modul/debugs"  end -- дополнения для отладки
   if prorabflag  then require "modul/prorab"  end -- учетчик-контроллер прораб :)
-  require "modul/levels"  -- Все рабочие уровни
-  --require "modul/testlevels" -- Тестовые уровни
+  --require "modul/levels"  -- Все рабочие уровни
+  require "modul/testlevels" -- Тестовые уровни
   require "modul/keyevent"   -- Движения игрока
   require "modul/levcompl"   -- Проверка выигрыша и показ
   --Timer=require "lib/hump/timer"   -- Библиотека таймера
@@ -56,7 +56,7 @@ function love.load()
   Mbox=love.audio.newSource("sound/box.ogg","static")
   Lgong=love.audio.newSource("sound/gong.ogg","static")
   -- Шрифт
-  status_font = love.graphics.newFont("font/font.ttf", tileSize/2 )  
+  status_font = love.graphics.newFont("font/font.ttf", tileSize/4*3 )  
   Level_font  = love.graphics.newFont("font/font.ttf", tileSize)  
   -- Картинки
   TileSetPng=love.graphics.newImage("image/tileset3.png")
@@ -206,7 +206,7 @@ function love.draw()
      love.graphics.draw(TileSetPng,TileQ[22],(mxi)*tileSize,(myi)*tileSize)
     end
   end
-  
+  --
   -- постоянное формирование игрового поля
   for myi=1, 16 do
     for mxi=1,19 do
@@ -228,19 +228,35 @@ function love.draw()
    end
   end
   
-    -- Печать счетчика шагов - вверху?
-  love.graphics.setFont( status_font )
-  love.graphics.setColor(255,0,100,255) 
-  love.graphics.print("Steps  "..countstep, tileSize*19+10, tileSize*0)
-  -- Печать номера уровня голубыми цифрами
+  -- ПЕЧАТЬ НАЗВАНИЯ ИГРЫ
   love.graphics.setFont( Level_font )
-  love.graphics.setColor(255,0,100,255) 
-  love.graphics.print("Level  "..mygamelevel, tileSize*19+10, tileSize*15)
+  -- подкладываем фон с рамкой под текст
+  love.graphics.setColor(127,0,0,255) 
+  love.graphics.rectangle("fill",tileSize*19+4, tileSize*0+10,
+      tileSize*6-7,tileSize*1-15,10,10)     
+  love.graphics.setColor(255,100,0,255)
+  love.graphics.print("SOCOBAN", tileSize*19+16, tileSize*0)
+  -- подкладываем фон с рамкой под информацию
+  love.graphics.setColor(127,0,0,255) 
+  love.graphics.rectangle("fill",tileSize*19+4, tileSize*14,
+      tileSize*6-7,tileSize*2-5,10,10)     
+  love.graphics.setColor(0,0,0,255) 
+  love.graphics.setLineWidth( 3 )    -- толщина линии
+  love.graphics.rectangle("line",tileSize*19+4, tileSize*14,
+      tileSize*6-7,tileSize*2-5,10,10)     
+    -- Печать счетчика шагов
+  love.graphics.setFont( status_font )
+  love.graphics.setColor(0,0,0,255) 
+  love.graphics.print("* "..countstep, tileSize*19+10, tileSize*14+4)
+  -- Печать номера уровня 
+  love.graphics.setFont( Level_font )
+  love.graphics.setColor(0,0,00,255) 
+  love.graphics.print("Level  "..mygamelevel, tileSize*19+10, tileSize*15-6)
   -- Печать модулей
-  if debudsflag then debugs.show() end -- Отладочная информация
-  if pcflag then pc.show() end  -- Отличия для ПК
-  levcompl.show() -- Если выигрыш. Вызываем именно отсюда!
+  if debudsflag then debugs.show() end   -- Отладочная информация
+  if pcflag then pc.show() end           -- Отличия для ПК
   if androidflag then android.show() end -- Отличия для смартфона
+  levcompl.show()        -- Если выигрыш. Вызываем именно отсюда!
   if prorabflag  then prorab.show() end  -- Рисуем полет Прораба 
   
 end  -- End DRAW

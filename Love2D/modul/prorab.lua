@@ -31,11 +31,11 @@ function prorab.run(prx,pry)
  end
  -- проверка выхода за пределы игрового поля
  if prx<10  then prx=20   prxk=1  end
- if prx>love.graphics.getWidth()-tileSize 
-     then prx=love.graphics.getWidth()-tileSize  prxk=-1 end
+ if prx>love.graphics.getWidth()/myscale-tileSize*2 
+     then prx=love.graphics.getWidth()/myscale-tileSize*2  prxk=-1 end
  if pry<10  then pry=20   pryk=1  end
- if pry>love.graphics.getHeight()-tileSize 
-     then pry=love.graphics.getHeight()-tileSize  pryk=-1 end 
+ if pry>love.graphics.getHeight()/myscale-tileSize*2 
+     then pry=love.graphics.getHeight()/myscale-tileSize*2  pryk=-1 end 
  -- формируем координаты прораба
  prx=prx+love.math.random(0,1)*prxk/1 --10
  pry=pry+love.math.random(0,1)*pryk/1 
