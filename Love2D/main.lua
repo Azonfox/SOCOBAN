@@ -12,7 +12,7 @@ function love.load()
   androidflag=false  -- версия для android, ИЛИ
        pcflag=true  -- версия для ПК
   prorabflag=true   -- включить прораба в игру
-  xsound=false       -- вкл. звуки
+  xsound=false       -- вкл. звуки  =====================
  
   --Include
   if androidflag then require "modul/android" end -- дополнения для запуска на смартфоне
@@ -28,7 +28,7 @@ function love.load()
   
   -- Константы
   tileSize=32    -- размер ячейки и спрайта!
-  --maxlevel находится ф файлах массивов уровней
+  --maxlevel находится в файлах массивов уровней
   
   --Переменные
   countstep=0 --  проделано шагов
@@ -37,6 +37,7 @@ function love.load()
   mygamelevel=1  -- номер начального уровня
   keyMess=0 -- Для проверки выбора меню
 
+  gamepad={} -- игровой уровень 19х16
   TileQ={}  -- Вырезенные спрайты 
   UndoMen={}  -- Таблица UNDO для отката
   xblock=0  -- Считанный байт игрового поля
@@ -123,7 +124,7 @@ function gamereset(gamelevel)
   if gamelevel<1  then gamelevel=1  end
   --Формирование текущего уровня gamepad из mARR
   local adr=(gamelevel-1)*19*16
-  gamepad={}
+---  gamepad={}
    for myi=1, 16 do
     gamepad[myi]={}
     for mxi=1,19 do
