@@ -23,7 +23,8 @@ function love.load()
   require "modul/testlevels" -- Тестовые уровни
   require "modul/keyevent"   -- Движения игрока
   require "modul/levcompl"   -- Проверка выигрыша и показ
-  --Timer=require "lib/hump/timer"   -- Библиотека таймера
+  require "modul/files"      -- Файлы
+  --Timer=require "lib/hump/timer"   -- Чужая Библиотека таймера
   
   -- Константы
   tileSize=32    -- размер ячейки и спрайта!
@@ -70,12 +71,18 @@ function love.load()
   QuadTile(8,3,1);   QuadTile(9,4,1);   QuadTile(10,5,1);
   QuadTile(11,6,1);   QuadTile(12,7,1);
   -- Выставляем уровень изначально
+  files.load()
   gamereset(mygamelevel) 
   myscreen() -- Расчитываем экран и масштаб
-  
+ 
+  files.load()
   --timer = Timer() -- включить чужой таймер hump
-  
+ 
 end -- End LOAD
+
+
+
+
 
 --###########################################??????????
 -- Функция для удобного сокращения длины записей Quad
@@ -179,7 +186,7 @@ function love.update(dt)
   if prorabflag then prorab.update(dt) end
     
   levcompl.update(dt) -- Проверка выигрыша - есть ли вообще свободные ящики? 
-  
+  files.update()   --- ??? 
   end -- End UPDATE
   
   
@@ -236,6 +243,8 @@ function love.draw()
       tileSize*6-7,tileSize*1-15,10,10)     
   love.graphics.setColor(255,100,0,255)
   love.graphics.print("SOCOBAN", tileSize*19+16, tileSize*0)
+  
+  -- ПЕЧАТЬ СТАТИСТИКИ
   -- подкладываем фон с рамкой под информацию
   love.graphics.setColor(127,0,0,255) 
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*14,
@@ -252,11 +261,19 @@ function love.draw()
   love.graphics.setFont( Level_font )
   love.graphics.setColor(0,0,00,255) 
   love.graphics.print("Level  "..mygamelevel, tileSize*19+10, tileSize*15-6)
-  -- Печать модулей
+  
+  -- Печать SHOW из модулей, если они включены
+  -- Внимание на порядок следования - зависят цвета при выигрыше
   if debudsflag then debugs.show() end   -- Отладочная информация
   if pcflag then pc.show() end           -- Отличия для ПК
   if androidflag then android.show() end -- Отличия для смартфона
   levcompl.show()        -- Если выигрыш. Вызываем именно отсюда!
   if prorabflag  then prorab.show() end  -- Рисуем полет Прораба 
   
+  files.show()  -- печать тестов файловой системы
+  
 end  -- End DRAW
+
+function love.quit() -- При выходе из системы
+ files.quit()
+end

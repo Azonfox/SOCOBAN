@@ -5,7 +5,6 @@ function debugs.load()
   xdt=0.02 -- для тестирования задержек
 end
 
-
 function debugs.update(dt)
   xdt=math.floor(1/dt) -- test dt
 end
@@ -32,5 +31,6 @@ function debugs.show()
        love.graphics.print(UndoMen[i], tileSize+i*30, tileSize*15)     
   end
   --]]
- 
 end
+
+
