@@ -1,18 +1,18 @@
 --[[
-Сохраняем восстанавливаем:
+Сохраняем\восстанавливаем:
 
   countstep=0 --  проделано шагов
   manx=1 --Координаты игрока XY
   many=1
   mygamelevel=1  -- номер начального уровня
-  keyMess=0 -- Для проверки выбора меню
+
 
   gamepad={} -- игровой уровень 19х16
   UndoMen={}  -- Таблица UNDO для отката
   kmen=0    -- направление игрока вниз
   rkmen=0   -- не толкающий игрок 
 
-  xsound -- вкл.откл звук  true-false
+  xsound -- вкл.откл звук  true-false или перводим в число
 
 
 --]]
@@ -62,6 +62,7 @@ function files.quit()  -- при выходе сохранить все
 end
 
 -- Несколько функций для удобства работы с файлами
+
 -- функция возврващает 1 для true и  0 для false
 function filesb2n(xbool)
   if xbool then return 1 else return 0 end
@@ -71,8 +72,4 @@ function filesn2b(xnumber)
   if xnumber==1 then return true else return false end
 end
 
-function tostring_n(xnumber,count)
-  local xstr
-  return tostring(xnumber)
-end
   

@@ -1,4 +1,4 @@
-﻿-- 27-11-2023 HP
+﻿-- 29-11-2023 HP
 --[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
@@ -19,11 +19,12 @@ function love.load()
   if pcflag then require "modul/pc" end -- дополнения для запуска на ПК
   if debudsflag  then require "modul/debugs"  end -- дополнения для отладки
   if prorabflag  then require "modul/prorab"  end -- учетчик-контроллер прораб :)
-  --require "modul/levels"  -- Все рабочие уровни
-  require "modul/testlevels" -- Тестовые уровни
+  if filesflag  then require "modul/files"    end -- Файлы
+  require "modul/levels"  -- Все рабочие уровни
+  --require "modul/testlevels" -- Тестовые уровни
   require "modul/keyevent"   -- Движения игрока
   require "modul/levcompl"   -- Проверка выигрыша и показ
-  require "modul/files"      -- Файлы
+  
   --Timer=require "lib/hump/timer"   -- Чужая Библиотека таймера
   
   -- Константы
@@ -72,13 +73,11 @@ function love.load()
   QuadTile(8,3,1);   QuadTile(9,4,1);   QuadTile(10,5,1);
   QuadTile(11,6,1);   QuadTile(12,7,1);
   -- Выставляем уровень изначально
-  files.load()
+  if filesflag  then files.load() end
   gamereset(mygamelevel) 
   myscreen() -- Расчитываем экран и масштаб
  
-  files.load()
   --timer = Timer() -- включить чужой таймер hump
- 
 end -- End LOAD
 
 
@@ -187,8 +186,7 @@ function love.update(dt)
   if prorabflag then prorab.update(dt) end
     
   levcompl.update(dt) -- Проверка выигрыша - есть ли вообще свободные ящики? 
-  files.update()   --- ??? 
-  end -- End UPDATE
+end -- End UPDATE
   
   
   
@@ -271,10 +269,10 @@ function love.draw()
   levcompl.show()        -- Если выигрыш. Вызываем именно отсюда!
   if prorabflag  then prorab.show() end  -- Рисуем полет Прораба 
   
-  files.show()  -- печать тестов файловой системы
+  if filesflag  then files.show()  end -- печать тестов файловой системы
   
 end  -- End DRAW
 
 function love.quit() -- При выходе из системы
- files.quit()
+ if filesflag  then files.quit() end
 end

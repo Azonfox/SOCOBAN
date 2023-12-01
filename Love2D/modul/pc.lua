@@ -51,7 +51,12 @@ end
     if (key == " " or key == "space")  then  undoload() end -- восстанавливаем согласно откату   
     
     if (key == "f1")  then  gamemenu("Выберите режим:") end   
-    if (key == "return")  then  gamereset(mygamelevel) end   -- уровень на начало
+    if (key == "return")  then -- Уровень на начало
+        local tmp=countstep  -- Не сбрасываем счетчик ходов
+        gamereset(mygamelevel)         -- при сбросе уровня
+        countstep=tmp 
+    end   
+    
     if (key == "f3" and mygamelevel<maxlevel) then  
         mygamelevel=mygamelevel+1
         gamereset(mygamelevel) 
