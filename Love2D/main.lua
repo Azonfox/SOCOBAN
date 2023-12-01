@@ -8,10 +8,11 @@
 -- Начальная загрузка
 function love.load()
   -- Настройки
-  debudsflag=true   -- используем отладку
+  debudsflag=false   -- используем отладку
   androidflag=false  -- версия для android, ИЛИ
        pcflag=true  -- версия для ПК
   prorabflag=true   -- включить прораба в игру
+  filesflag=false   -- вкл. файловую систему
   xsound=false       -- вкл. звуки  =====================
  
   --Include
@@ -20,8 +21,8 @@ function love.load()
   if debudsflag  then require "modul/debugs"  end -- дополнения для отладки
   if prorabflag  then require "modul/prorab"  end -- учетчик-контроллер прораб :)
   if filesflag  then require "modul/files"    end -- Файлы
-  require "modul/levels"  -- Все рабочие уровни
-  --require "modul/testlevels" -- Тестовые уровни
+  --require "modul/levels"  -- Все рабочие уровни
+  require "modul/testlevels" -- Тестовые уровни
   require "modul/keyevent"   -- Движения игрока
   require "modul/levcompl"   -- Проверка выигрыша и показ
   
@@ -237,15 +238,15 @@ function love.draw()
   -- ПЕЧАТЬ НАЗВАНИЯ ИГРЫ
   love.graphics.setFont( Level_font )
   -- подкладываем фон с рамкой под текст
-  love.graphics.setColor(127,0,0,255) 
+  love.graphics.setColor(100,0,0,255) 
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*0+10,
       tileSize*6-7,tileSize*1-15,10,10)     
-  love.graphics.setColor(255,100,0,255)
-  love.graphics.print("SOCOBAN", tileSize*19+16, tileSize*0)
+  love.graphics.setColor(200,200,0,255)
+  love.graphics.print("Box", tileSize*20+20, tileSize*0)
   
   -- ПЕЧАТЬ СТАТИСТИКИ
   -- подкладываем фон с рамкой под информацию
-  love.graphics.setColor(127,0,0,255) 
+  love.graphics.setColor(100,0,0,150) 
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*14,
       tileSize*6-7,tileSize*2-5,10,10)     
   love.graphics.setColor(0,0,0,255) 
@@ -254,11 +255,11 @@ function love.draw()
       tileSize*6-7,tileSize*2-5,10,10)     
     -- Печать счетчика шагов
   love.graphics.setFont( status_font )
-  love.graphics.setColor(0,0,0,255) 
+  love.graphics.setColor(150,150,0,255) 
   love.graphics.print("* "..countstep, tileSize*19+10, tileSize*14+4)
   -- Печать номера уровня 
   love.graphics.setFont( Level_font )
-  love.graphics.setColor(0,0,00,255) 
+  love.graphics.setColor(200,200,00,255) 
   love.graphics.print("Level  "..mygamelevel, tileSize*19+10, tileSize*15-6)
   
   -- Печать SHOW из модулей, если они включены
@@ -268,8 +269,7 @@ function love.draw()
   if androidflag then android.show() end -- Отличия для смартфона
   levcompl.show()        -- Если выигрыш. Вызываем именно отсюда!
   if prorabflag  then prorab.show() end  -- Рисуем полет Прораба 
-  
-  if filesflag  then files.show()  end -- печать тестов файловой системы
+  if filesflag  then  files.show()  end -- печать тестов файловой системы
   
 end  -- End DRAW
 

@@ -13,7 +13,7 @@ end
 function pc.show()
   -- Печать справки по клавишам
   local textx=19
-  love.graphics.setColor(0,0,0,255)
+  love.graphics.setColor(25,25,50,255)
   love.graphics.setFont( Help_font )
   local helpmess={
     "F1-MENU",
