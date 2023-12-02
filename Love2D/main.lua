@@ -8,7 +8,7 @@
 -- Начальная загрузка
 function love.load()
   -- Настройки
-  debudsflag=false   -- используем отладку
+  debudsflag=true   -- используем отладку
   androidflag=false  -- версия для android, ИЛИ
        pcflag=true  -- версия для ПК
   prorabflag=true   -- включить прораба в игру
@@ -80,7 +80,7 @@ function love.load()
   gamereset(mygamelevel) 
   myscreen() -- Расчитываем экран и масштаб
   if filesflag  then files.load() end
- 
+  bgfill()
   --timer = Timer() -- включить чужой таймер hump
 end -- End LOAD
 
@@ -100,6 +100,37 @@ end
 function love.resize()
   myscreen()
 end
+
+
+--###########################################
+   -- Замена пустого внешнего поля 0  вокруг стен на фон сcodefil
+  function bgfill()
+    -- (при наличии редактора УРОВНЕЙ возможна изначальная 
+     ---прорисовка расширенным трехмерным тайлсетом) 
+     -- или подготовить все уровни заранее...
+   -- горизонтально...
+   local codefill=99
+   for myi=1,16 do
+    for mxi=1,19 do 
+      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=codefill else break end 
+    end
+    for mxi=19,1,-1 do 
+      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=codefill else break end 
+    end   
+   end    
+   -- .. и вертикально
+    for mxi=1,19 do
+    for myi=1,16 do 
+      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) 
+         then gamepad[myi][mxi]=codefill else break end 
+    end
+    for myi=16,1,-1 do 
+      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) 
+         then gamepad[myi][mxi]=codefill else break end 
+    end   
+   end  
+end
+
 
 --###########################################
 --  Расчитываем и устанавливаем масштабирование 
@@ -136,33 +167,7 @@ function gamereset(gamelevel)
       if(gamepad[myi][mxi]==5) then manx=mxi many=myi end -- игрок
     end
    end 
-   
-   
-   -- Замена пустого внешнего поля 0  вокруг стен на фон сcodefil
-    -- (при наличии редактора УРОВНЕЙ возможна изначальная 
-     ---прорисовка расширенным трехмерным тайлсетом) 
-     -- или подготовить все уровни заранее...
-   -- горизонтально...
-   local codefill=99
-   for myi=1,16 do
-    for mxi=1,19 do 
-      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=codefill else break end 
-    end
-    for mxi=19,1,-1 do 
-      if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=codefill else break end 
-    end   
-   end    
-   -- .. и вертикально
-    for mxi=1,19 do
-    for myi=1,16 do 
-      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) 
-         then gamepad[myi][mxi]=codefill else break end 
-    end
-    for myi=16,1,-1 do 
-      if(gamepad[myi][mxi]==0 or gamepad[myi][mxi]==codefill) 
-         then gamepad[myi][mxi]=codefill else break end 
-    end   
-   end  
+  ---bgfill()   
     -- изначально сохраняем информацию об откате
     undosave()
 end  -- End GAMERESET

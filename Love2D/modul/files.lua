@@ -10,9 +10,12 @@ function files.write()
   -- при следующей загрузке игры будут данные по-умолчанию
   if file:isOpen() then
    -- table gamepad
+   local tmp99
    for myi=1, 16 do
     for mxi=1,19 do
-       file:write(gamepad[myi][mxi]); file:write(",")
+       tmp99=gamepad[myi][mxi]
+       if tmp99==99 then tmp99=0 end
+       file:write(tmp99); file:write(",")
     end
    end 
    -- запись переменных
