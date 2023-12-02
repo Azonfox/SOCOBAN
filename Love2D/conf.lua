@@ -18,7 +18,7 @@ function love.conf(t)
     t.console = false                  -- Подключение консоли (boolean, только в Windows) 
   t.window.usedpiscale=true      -- FULL screen
     t.window.title = "Boxes"         -- Заголовок окна (строка) 
-    t.window.icon = "image/icon.png"         -- Путь к файлу изображения, используемого как значок окна (строка) или --nil
+    t.window.icon = "image/iconbox.png" -- Путь к файлу изображения, используемого как значок окна (строка) или --nil
     t.window.width = gw                 -- Ширина окна (число) 
     t.window.height = gh                -- Высота окна (число) 
     t.window.borderless = false        -- Удаление всего визуального оформления границ окна (boolean) 

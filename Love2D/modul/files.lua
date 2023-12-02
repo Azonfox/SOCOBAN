@@ -69,7 +69,7 @@ function files.load()
 end
 
 function files.quit()  
- files.write() -- при выходе сохранить все данные
+ files.write() -- при выходе из игры сохранить все данные
 end
 
 -- Несколько функций для удобства работы с файлами
