@@ -1,4 +1,4 @@
-﻿-- 29-11-2023 HP
+﻿-- 02-12-2023 HP
 --[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
@@ -12,7 +12,7 @@ function love.load()
   androidflag=false  -- версия для android, ИЛИ
        pcflag=true  -- версия для ПК
   prorabflag=true   -- включить прораба в игру
-  filesflag=false   -- вкл. файловую систему
+  filesflag=true    -- вкл. файловую систему
   xsound=false       -- вкл. звуки  =====================
  
   --Include
@@ -21,8 +21,8 @@ function love.load()
   if debudsflag  then require "modul/debugs"  end -- дополнения для отладки
   if prorabflag  then require "modul/prorab"  end -- учетчик-контроллер прораб :)
   if filesflag  then require "modul/files"    end -- Файлы
-  --require "modul/levels"  -- Все рабочие уровни
-  require "modul/testlevels" -- Тестовые уровни
+  require "modul/levels"  -- Все рабочие уровни
+  --require "modul/testlevels" -- Тестовые уровни
   require "modul/keyevent"   -- Движения игрока
   require "modul/levcompl"   -- Проверка выигрыша и показ
   
@@ -62,6 +62,7 @@ function love.load()
   -- Шрифт
   status_font = love.graphics.newFont("font/font.ttf", tileSize/4*3 )  
   Level_font  = love.graphics.newFont("font/font.ttf", tileSize)  
+  freemonobold = love.graphics.newFont("font/freemonobold.ttf", tileSize)  
   -- Картинки
   TileSetPng=love.graphics.newImage("image/tileset3.png")
   --TileSetPng:setFilter("nearest","linear") -- см выше love.graphics.setDefaultFilter
@@ -74,9 +75,9 @@ function love.load()
   QuadTile(8,3,1);   QuadTile(9,4,1);   QuadTile(10,5,1);
   QuadTile(11,6,1);   QuadTile(12,7,1);
   -- Выставляем уровень изначально
-  if filesflag  then files.load() end
   gamereset(mygamelevel) 
   myscreen() -- Расчитываем экран и масштаб
+  if filesflag  then files.load() end
  
   --timer = Timer() -- включить чужой таймер hump
 end -- End LOAD
@@ -135,12 +136,12 @@ function gamereset(gamelevel)
    end 
    
    
-   -- Замена пустого внешнего поля 0  вокруг стен на фон 11
+   -- Замена пустого внешнего поля 0  вокруг стен на фон сcodefil
     -- (при наличии редактора УРОВНЕЙ возможна изначальная 
      ---прорисовка расширенным трехмерным тайлсетом) 
      -- или подготовить все уровни заранее...
    -- горизонтально...
-   local codefill=222
+   local codefill=99
    for myi=1,16 do
     for mxi=1,19 do 
       if(gamepad[myi][mxi]==0) then gamepad[myi][mxi]=codefill else break end 
@@ -228,7 +229,7 @@ function love.draw()
       xblock=5+kmen+rkmen -- учитываем направление движения и толкание
      end
      -- собственно печать тайла в соответствии с картой
-     if xblock<100 then
+     if xblock<99 then
       love.graphics.draw(TileSetPng,TileQ[xblock],(mxi-1)*tileSize,
           (myi-1)*tileSize)
      end  
@@ -236,15 +237,16 @@ function love.draw()
   end
   
   -- ПЕЧАТЬ НАЗВАНИЯ ИГРЫ
-  love.graphics.setFont( Level_font )
+  love.graphics.setFont(freemonobold)
   -- подкладываем фон с рамкой под текст
   love.graphics.setColor(100,0,0,255) 
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*0+10,
       tileSize*6-7,tileSize*1-15,10,10)     
   love.graphics.setColor(200,200,0,255)
-  love.graphics.print("Box", tileSize*20+20, tileSize*0)
+  love.graphics.print("BOXES", tileSize*20+15, tileSize*0)
   
   -- ПЕЧАТЬ СТАТИСТИКИ
+    love.graphics.setFont( Level_font )
   -- подкладываем фон с рамкой под информацию
   love.graphics.setColor(100,0,0,150) 
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*14,
