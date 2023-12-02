@@ -1,8 +1,9 @@
---Сохраняем\восстанавливаем:
+--Сохраняем при выходе из игры и
+-- восстанавливаем уровень игры при старте, если возможно
 files={}
 
+-- запись РАБОЧИХ данных в файл
 function files.write()
-  -- запись РАБОЧИХ данных в файл
   file=love.filesystem.newFile("test.dat")
   file:open('w') 
  --Если файл открылся, то пишем данные. Если не открылся, то
@@ -32,8 +33,8 @@ function files.write()
   end
 end
     
+-- восстановление  данных
 function files.read()
-  -- восстановление  данных
   -- Открываем файл для чтения и проверяем открытие
   file=love.filesystem.newFile("test.dat")
   file:open('r')
@@ -45,7 +46,6 @@ function files.read()
        gamepad[myi][mxi]=files.comread()
     end
    end 
-        
    -- чтение переменных
   countstep=files.comread() --  проделано шагов
   manx=files.comread()      --  координаты игрока
@@ -60,20 +60,16 @@ function files.read()
      if tmp==100 then tmp=nil end
      UndoMen[i]=tmp
   end
-  
   file:close()
   end
 end
 
 function files.load()
-  files.read()
+  files.read() -- читаем при загрузке игры
 end
-function files.show()
-  -- тест файловой системы
-  love.graphics.print("f-"..mygamelevel.."-"..manx.."-"..many, tileSize*19+10, tileSize*12) 
-end
-function files.quit()  -- при выходе сохранить все
- files.write()
+
+function files.quit()  
+ files.write() -- при выходе сохранить все данные
 end
 
 -- Несколько функций для удобства работы с файлами
@@ -86,7 +82,7 @@ function filesn2b(xnumber)
   if xnumber==1 then return true else return false end
 end
 
--- функция возвращает число из файла между запятыми
+-- функция возвращает число из файла данных между запятыми
 function files.comread()
     y=1; xxx=''
     for i=1, file:getSize() do
@@ -94,7 +90,7 @@ function files.comread()
        if x~="," then -- накапливаем данные между разделителями
          xxx=xxx..x 
        else 
-         return tonumber(xxx)
+         return tonumber(xxx) -- возвращаем ЧИСЛО
        end 
     end
 end

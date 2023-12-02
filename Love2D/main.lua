@@ -13,7 +13,7 @@ function love.load()
        pcflag=true  -- версия для ПК
   prorabflag=true   -- включить прораба в игру
   filesflag=true    -- вкл. файловую систему
-  xsound=false       -- вкл. звуки  =====================
+  xsound=false       -- откл. звуки  
  
   --Include
   if androidflag then require "modul/android" end -- дополнения для запуска на смартфоне
@@ -42,6 +42,7 @@ function love.load()
   gamepad={} -- игровой уровень 19х16
   TileQ={}  -- Вырезенные спрайты 
   UndoMen={}  -- Таблица UNDO для отката
+  DataTime={}  --время
   xblock=0  -- Считанный байт игрового поля
   kmen=0    -- направление игрока вниз
   rkmen=0   -- не толкающий игрок 
@@ -62,7 +63,8 @@ function love.load()
   -- Шрифт
   status_font = love.graphics.newFont("font/font.ttf", tileSize/4*3 )  
   Level_font  = love.graphics.newFont("font/font.ttf", tileSize)  
-  freemonobold = love.graphics.newFont("font/freemonobold.ttf", tileSize)  
+  time_font   = love.graphics.newFont("font/freemonobold.ttf", tileSize/5*3)  
+  Name_font   = love.graphics.newFont("font/freemonobold.ttf", tileSize)
   -- Картинки
   TileSetPng=love.graphics.newImage("image/tileset3.png")
   --TileSetPng:setFilter("nearest","linear") -- см выше love.graphics.setDefaultFilter
@@ -186,8 +188,14 @@ end --end gamemenu
 function love.update(dt)
   if debudsflag then debugs.update(dt) end
   if prorabflag then prorab.update(dt) end
-    
-  levcompl.update(dt) -- Проверка выигрыша - есть ли вообще свободные ящики? 
+  levcompl.update(dt) --Проверка выигрыша-есть ли вообще свободные ящики? 
+  --формируем строку времени
+  DataTime=os.date('*t')
+  xhour=DataTime.hour
+  xminut=DataTime.min
+  if  xhour<10 then  xhour="0"..xhour  end
+  if xminut<10 then xminut="0"..xminut end
+  os_time=xhour..":"..xminut
 end -- End UPDATE
   
   
@@ -236,17 +244,20 @@ function love.draw()
    end
   end
   
-  -- ПЕЧАТЬ НАЗВАНИЯ ИГРЫ
-  love.graphics.setFont(freemonobold)
+  -- ПЕЧАТЬ ДАННЫХ ИГРЫ
   -- подкладываем фон с рамкой под текст
   love.graphics.setColor(100,0,0,255) 
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*0+10,
       tileSize*6-7,tileSize*1-15,10,10)     
+  -- Печать системного времени    
+  love.graphics.setColor(0,0,0,255)
+  love.graphics.setFont(time_font)
+  love.graphics.print(os_time,tileSize*23, tileSize*0+8)
+  -- печать названия игры  
+  love.graphics.setFont( Name_font )
   love.graphics.setColor(200,200,0,255)
-  love.graphics.print("BOXES", tileSize*20+15, tileSize*0)
-  
+  love.graphics.print("BOXES", tileSize*19, tileSize*0)
   -- ПЕЧАТЬ СТАТИСТИКИ
-    love.graphics.setFont( Level_font )
   -- подкладываем фон с рамкой под информацию
   love.graphics.setColor(100,0,0,150) 
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*14,
@@ -271,7 +282,6 @@ function love.draw()
   if androidflag then android.show() end -- Отличия для смартфона
   levcompl.show()        -- Если выигрыш. Вызываем именно отсюда!
   if prorabflag  then prorab.show() end  -- Рисуем полет Прораба 
-  if filesflag  then  files.show()  end -- печать тестов файловой системы
   
 end  -- End DRAW
 

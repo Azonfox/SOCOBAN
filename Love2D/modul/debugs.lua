@@ -18,6 +18,10 @@ function debugs.show()
   love.graphics.print(love.graphics.getWidth().." x "
       ..love.graphics.getHeight(), tileSize*19+10, tileSize*13+16) 
  
+    -- тест файловой системы
+  love.graphics.print("file-NXY-"..mygamelevel.."-"..manx.."-"..many,
+      tileSize*19+10, tileSize*12+16) 
+   
    --[[
  -- Отладка Печать Y ---------------------------------------------------------------------
   love.graphics.setFont( bungee_font )
