@@ -10,6 +10,7 @@ function love.load()
   -- Настройки
   debudsflag=true   -- используем отладку
   androidflag=false  -- версия для android, ИЛИ
+      menuflag=false  -- меню
        pcflag=true  -- версия для ПК
   prorabflag=true   -- включить прораба в игру
   filesflag=true    -- вкл. файловую систему
@@ -20,29 +21,27 @@ function love.load()
   if pcflag then require "modul/pc" end -- дополнения для запуска на ПК
   if debudsflag  then require "modul/debugs"  end -- дополнения для отладки
   if prorabflag  then require "modul/prorab"  end -- учетчик-контроллер прораб :)
-  if filesflag  then require "modul/files"    end -- Файлы
+  if filesflag   then require "modul/files"   end -- Файлы
+  if menuflag    then require "modul/menu"    end -- Меню
   require "modul/levels"  -- Все рабочие уровни
   --require "modul/testlevels" -- Тестовые уровни
   require "modul/keyevent"   -- Движения игрока
   require "modul/levcompl"   -- Проверка выигрыша и показ
-  
   --Timer=require "lib/hump/timer"   -- Чужая Библиотека таймера
   
   -- Константы
   tileSize=32    -- размер ячейки и спрайта!
   --maxlevel находится в файлах массивов уровней
-  
+  -- Таблицы
+  gamepad={} -- игровой уровень 19х16
+  TileQ={}  -- Вырезенные спрайты 
+  UndoMen={}  -- Таблица UNDO для отката
+  DataTime={}  --время
   --Переменные
   countstep=0 --  проделано шагов
   manx=1 --Координаты игрока XY
   many=1
   mygamelevel=1  -- номер начального уровня
-  keyMess=0 -- Для проверки выбора меню
-
-  gamepad={} -- игровой уровень 19х16
-  TileQ={}  -- Вырезенные спрайты 
-  UndoMen={}  -- Таблица UNDO для отката
-  DataTime={}  --время
   xblock=0  -- Считанный байт игрового поля
   kmen=0    -- направление игрока вниз
   rkmen=0   -- не толкающий игрок 
@@ -50,6 +49,7 @@ function love.load()
   if androidflag then android.load() end
   if debudsflag  then debugs.load()  end
   if prorabflag  then prorab.load()  end
+  if menuflag    then menu.load()    end
   if pcflag      then pc.load()      end
   levcompl.load()
   
@@ -80,7 +80,7 @@ function love.load()
   gamereset(mygamelevel) 
   myscreen() -- Расчитываем экран и масштаб
   if filesflag  then files.load() end
-  bgfill()
+  bgfill() -- заполняем фон за пределами стен
   --timer = Timer() -- включить чужой таймер hump
 end -- End LOAD
 
@@ -167,25 +167,9 @@ function gamereset(gamelevel)
       if(gamepad[myi][mxi]==5) then manx=mxi many=myi end -- игрок
     end
    end 
-  ---bgfill()   
     -- изначально сохраняем информацию об откате
     undosave()
 end  -- End GAMERESET
-
---###########################################
--- Функция МЕНЮ - заменить на графическое окно
-function gamemenu(menumsg)
-    buttons = {"Выход1","Далее2","Сначала3","Первый4", 
-    escapebutton = 1, enterbutton = 4}
-    keyMess=love.window.showMessageBox("SOCOBAN",menumsg,buttons)
-    levelOK=0 
-    if       keyMess==1 then  love.event.quit()           -- Выход
-      elseif keyMess==2 then  mygamelevel=mygamelevel+1   -- Далее
-      elseif keyMess==3 then  mygamelevel=mygamelevel     -- Сначала
-      elseif keyMess==4 then  mygamelevel=1               -- Первый
-    end
-    if (mygamelevel<=maxlevel) then gamereset(mygamelevel) end
-end --end gamemenu
 
  
 --################################################################################################## 

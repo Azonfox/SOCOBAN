@@ -5,6 +5,16 @@ function pc.load()
     xscreen=true -- full screen
     Help_font  = love.graphics.newFont("font/font.ttf", tileSize/4*3) 
     xrighmenu=6 -- размер меню в клетках справа от игрового поля для ПК
+    helpmess={
+    "",
+    "F3-NEXT",
+    "F4-PREV",
+    "F5-SOUND", 
+    "F9-SCREEN",
+    "F12-QUIT",
+    "ENT-RESTART",
+    "SPACE-UNDO"}
+   if menuflag then helpmess[1]="F1-MENU" end
 end
 
 function pc.update(dt)
@@ -15,15 +25,7 @@ function pc.show()
   local textx=19
   love.graphics.setColor(25,25,50,255)
   love.graphics.setFont( Help_font )
-  local helpmess={
-    "F1-MENU",
-    "F3-NEXT",
-    "F4-PREV",
-    "F5-SOUND", 
-    "F9-SCREEN",
-    "F12-QUIT",
-    "ENT-RESTART",
-    "SPACE-UNDO"}
+  -- печать горячих клавиш
   for k,v in ipairs(helpmess) do
    love.graphics.print(helpmess[k], tileSize*textx+6, tileSize*k)
   end
@@ -50,20 +52,23 @@ end
     if (key == "left")  then gamekeyevent(-1,-2,0,0) kmen=3 end
     if (key == " " or key == "space")  then  undoload() end -- восстанавливаем согласно откату   
     
-    if (key == "f1")  then  gamemenu("Выберите режим:") end   
+    if (key == "f1")  and menuflag then  menu.gamemenu("Выберите режим:") end   
     if (key == "return")  then -- Уровень на начало
         local tmp=countstep  -- Не сбрасываем счетчик ходов
         gamereset(mygamelevel)         -- при сбросе уровня
+        bgfill() -- заполняем фон за пределами стен
         countstep=tmp 
     end   
     
     if (key == "f3" and mygamelevel<maxlevel) then  
         mygamelevel=mygamelevel+1
-        gamereset(mygamelevel) 
+        gamereset(mygamelevel)
+        bgfill() -- заполняем фон за пределами стен
     end    
     if (key == "f4" and mygamelevel>1) then  
         mygamelevel=mygamelevel-1
         gamereset(mygamelevel) 
+        bgfill() -- заполняем фон за пределами стен
     end    
    if key == "f5" then  
      if xsound then xsound=false else xsound=true end -- вкл\откл звук
