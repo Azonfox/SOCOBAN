@@ -8,7 +8,7 @@
 -- Начальная загрузка
 function love.load()
   -- Настройки
-  debudsflag=true   -- используем отладку
+  debudsflag=false   -- используем отладку
   androidflag=false  -- версия для android, ИЛИ
       menuflag=false  -- меню
        pcflag=true  -- версия для ПК
@@ -239,7 +239,7 @@ function love.draw()
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*0+10,
       tileSize*6-7,tileSize*1-15,10,10)     
   -- Печать системного времени    
-  love.graphics.setColor(0,0,0,255)
+  love.graphics.setColor(0,255,0,255)
   love.graphics.setFont(time_font)
   love.graphics.print(os_time,tileSize*23, tileSize*0+8)
   -- печать названия игры  
