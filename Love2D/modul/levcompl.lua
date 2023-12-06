@@ -75,5 +75,6 @@ end
         else mygamelevel=maxlevel end
       xgong=true -- Восстановить гонг для следующего уровня      
       compliteflag=false
-      gamereset(mygamelevel) 
+      gamereset(mygamelevel)
+      bgfill() -- заполняем фон за пределами стен
 end    
