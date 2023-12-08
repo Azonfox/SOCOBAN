@@ -20,8 +20,7 @@ function pc.update(dt)
 end
 
 function pc.show()
-  -- заливаем фон под меню
-  --при выигрыше меняем цвет
+  -- заливаем фон под меню, при выигрыше меняем цвет
   if compliteflag then love.graphics.setColor(0,0,255,0) 
     else love.graphics.setColor(255,255,255,255) end
   for myi=0,  love.graphics.getHeight()/tileSize/myscale do
