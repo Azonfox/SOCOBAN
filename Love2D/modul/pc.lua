@@ -38,21 +38,21 @@ function pc.show()
   love.graphics.rectangle("line",tileSize*19+4, tileSize*0+5,
       tileSize*6-7,tileSize*2-3,10,10)     
     -- Печать системного времени    
-  love.graphics.setColor(25,25,50,255)
+  love.graphics.setColor(0,250,0,255)
   love.graphics.setFont(time_font)
   love.graphics.print(os_time,tileSize*23+8, tileSize*1-9)
   -- печать названия игры  
   love.graphics.setFont( Name_font )
   love.graphics.setColor(200,200,0,255)
-  love.graphics.print("BOXES", tileSize*19+12, tileSize*0+21)
+  love.graphics.print("BOXES", tileSize*19+12, tileSize*0+18)
   -- Печать версии    
-  love.graphics.setColor(25,25,50,255)
+  love.graphics.setColor(200,200,0,255)
   love.graphics.setFont(time_font)
   love.graphics.print("v "..gameversion,tileSize*19+14, tileSize*1+14)
     -- Печать автора    
   love.graphics.setColor(25,25,50,255)
   love.graphics.setFont(time_font)
-  love.graphics.print("AzfoxGame",tileSize*19+10, tileSize*0+7)
+  love.graphics.print("AzfoxGame",tileSize*19+10, tileSize*0+5)
   -- Печать сайта    
   love.graphics.setColor(25,25,50,255)
   love.graphics.setFont(time_font)
@@ -67,8 +67,8 @@ function pc.show()
       tileSize*6-7,tileSize*2-5,10,10)     
     -- Печать счетчика шагов
   love.graphics.setFont( status_font )
-  love.graphics.setColor(150,150,0,255) 
-  love.graphics.print(countstep, tileSize*20, tileSize*14+4)
+  love.graphics.setColor(200,200,0,255) 
+  love.graphics.print(countstep, tileSize*20, tileSize*14+2)
   -- Печать номера уровня 
   love.graphics.setFont( Level_font )
   love.graphics.setColor(200,200,0,255) 

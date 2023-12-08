@@ -27,8 +27,8 @@ function love.load()
   if prorabflag  then require "modul/prorab"  end -- учетчик-контроллер прораб :)
   if filesflag   then require "modul/files"   end -- Файлы
   if menuflag    then require "modul/menu"    end -- Меню
-  --require "modul/levels"  -- Все рабочие уровни
-  require "modul/testlevels" -- Тестовые уровни
+  require "modul/levels"  -- Все рабочие уровни
+  --require "modul/testlevels" -- Тестовые уровни
   require "modul/keyevent"   -- Движения игрока
   require "modul/levcompl"   -- Проверка выигрыша и показ
   require "modul/fonts"      -- ВСЕ шрифты системы
