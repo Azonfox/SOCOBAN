@@ -1,14 +1,17 @@
 --Сохраняем при выходе из игры и
 -- восстанавливаем уровень игры при старте, если возможно
 files={}
+fileversion=1  -- версия файла программы
 
 -- запись РАБОЧИХ данных в файл
 function files.write()
-  file=love.filesystem.newFile("test.dat")
+  file=love.filesystem.newFile("save.dat")
   file:open('w') 
  --Если файл открылся, то пишем данные. Если не открылся, то
   -- при следующей загрузке игры будут данные по-умолчанию
   if file:isOpen() then
+   --version file 
+   file:write(fileversion); file:write(",")
    -- table gamepad
    local tmp99
    for myi=1, 16 do
@@ -32,6 +35,10 @@ function files.write()
     if tmp==nil then tmp=100 end
      file:write(tmp); file:write(",")
   end
+  -- сохранение пройденных уровней 1-да 0-нет
+    for i=1, maxlevel do 
+     file:write(levcompl[i]); file:write(",")
+    end  
   file:close()
   end
 end
@@ -39,11 +46,18 @@ end
 -- восстановление  данных
 function files.read()
   -- Открываем файл для чтения и проверяем открытие
-  file=love.filesystem.newFile("test.dat")
+  file=love.filesystem.newFile("save.dat")
   file:open('r')
   --Если файл открылся, то считываем данные до конца файла
   if file:isOpen() then
-       -- table gamepad
+  -- проверяем версию файла, если не совпадает - выход!!
+  filevers=files.comread()
+  if fileversion~=filevers then
+    file:close()
+    return
+  end
+  
+  -- table gamepad
    for myi=1, 16 do
     for mxi=1,19 do
        gamepad[myi][mxi]=files.comread()
@@ -63,6 +77,11 @@ function files.read()
      if tmp==100 then tmp=nil end
      UndoMen[i]=tmp
   end
+  -- восстановление пройденных уровней 1-да 0-нет
+    for i=1, maxlevel do 
+     local tmp=files.comread()
+     levcompl[i]=tmp
+    end  
   file:close()
   end
 end

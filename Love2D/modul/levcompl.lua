@@ -6,6 +6,10 @@ levcompl={}
     LevCompl_font  = love.graphics.newFont("font/font.ttf", tileSize)  
     compliteflag=false -- флаг окна выигрыша
     xgong=true -- гонг выигрыша звучит один раз
+    -- учет пройденных уровней 1-да 0-нет
+    for i=1, maxlevel do 
+      levcompl[i]=0
+    end  
 end
 
 
@@ -22,10 +26,20 @@ function levcompl.update(dt)
   if compliteflag then 
     if xsound and xgong then Lgong:play(); xgong=false end
     kmen=0  rkmen=0   -- Men стоит прямо и не толкая 
+    levcompl[mygamelevel]=1 -- учет пройденных уровней
   end
 end
 
 function levcompl.show()
+  -- Печать метки пройденного уровня зеленым
+  love.graphics.setFont( LevCompl_font )
+  if levcompl[mygamelevel]==1 then
+      love.graphics.setColor(0,250,0,255) 
+  else
+     love.graphics.setColor(150,150,0,255) 
+  end
+ love.graphics.print("*", tileSize*19+10, tileSize*14+4)
+
   -- Если выигрыш, то красим, иначе восстанавливаем цвета
   if compliteflag then 
     -- Выводим изображение окна выигрыша
@@ -67,7 +81,8 @@ function levcompl.show()
  else
     love.graphics.setColor(255,255,255,255) -- или восстанавливаем
   end 
-end  
+    
+end  --levcompl.show()
 
 -- Если есть окно выигрыша - выходим любой клавишей (см. pc.lua)
  function levcompl.key()

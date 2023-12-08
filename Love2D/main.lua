@@ -1,4 +1,4 @@
-﻿-- 06-12-2023 HP
+﻿-- 08-12-2023 HP
 --[[############ SOKOBAN #################
 0 - пол     |  3 - ящик на свободном поле
 1 - стена   |  4 - ящик стоит на цели
@@ -282,7 +282,7 @@ function love.draw()
     -- Печать счетчика шагов
   love.graphics.setFont( status_font )
   love.graphics.setColor(150,150,0,255) 
-  love.graphics.print("* "..countstep, tileSize*19+10, tileSize*14+4)
+  love.graphics.print(countstep, tileSize*20+0, tileSize*14+4)
   -- Печать номера уровня 
   love.graphics.setFont( Level_font )
   love.graphics.setColor(200,200,00,255) 
