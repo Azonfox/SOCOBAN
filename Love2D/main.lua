@@ -30,6 +30,7 @@ function love.load()
   --Timer=require "lib/hump/timer"   -- Чужая Библиотека таймера
   
   -- Константы
+  gameversion=0.23 --  версия программы
   tileSize=32    -- размер ячейки и спрайта!
   --maxlevel находится в файлах массивов уровней
   -- Таблицы
@@ -234,19 +235,42 @@ function love.draw()
   end
   
   -- ПЕЧАТЬ ДАННЫХ ИГРЫ
-  -- подкладываем фон с рамкой под текст
+  --[[ подкладываем фон с рамкой под текст
   love.graphics.setColor(100,0,0,255) 
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*0+10,
       tileSize*6-7,tileSize*1-15,10,10)     
-  -- Печать системного времени    
+  --]]
+  -- подкладываем фон с рамкой под text
+  love.graphics.setColor(100,0,0,150) 
+  love.graphics.rectangle("fill",tileSize*19+4, tileSize*0+5,
+      tileSize*6-7,tileSize*2-3,10,10)     
+  love.graphics.setColor(0,0,0,255) 
+  love.graphics.setLineWidth( 3 )    -- толщина линии
+  love.graphics.rectangle("line",tileSize*19+4, tileSize*0+5,
+      tileSize*6-7,tileSize*2-3,10,10)     
+    -- Печать системного времени    
   love.graphics.setColor(0,255,0,255)
   love.graphics.setFont(time_font)
-  love.graphics.print(os_time,tileSize*23, tileSize*0+8)
+  love.graphics.print(os_time,tileSize*23, tileSize*0+23)
   -- печать названия игры  
   love.graphics.setFont( Name_font )
   love.graphics.setColor(200,200,0,255)
-  love.graphics.print("BOXES", tileSize*19, tileSize*0)
+  love.graphics.print("BOXES", tileSize*19+10, tileSize*0+20)
+  -- Печать версии    
+  love.graphics.setColor(25,25,50,255)
+  love.graphics.setFont(time_font)
+  love.graphics.print("v "..gameversion,tileSize*19+10, tileSize*1+14)
+    -- Печать автора    
+  love.graphics.setColor(25,25,50,255)
+  love.graphics.setFont(time_font)
+  love.graphics.print("AzfoxGame",tileSize*19+10, tileSize*0+5)
+
+  
   -- ПЕЧАТЬ СТАТИСТИКИ
+  -- Печать сайта    
+  love.graphics.setColor(25,25,50,255)
+  love.graphics.setFont(time_font)
+  love.graphics.print("AzfoxGame.my.cam",tileSize*19+5, tileSize*13+10)
   -- подкладываем фон с рамкой под информацию
   love.graphics.setColor(100,0,0,150) 
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*14,

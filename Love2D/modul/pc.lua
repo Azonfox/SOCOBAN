@@ -27,13 +27,13 @@ function pc.show()
   love.graphics.setFont( Help_font )
   -- печать горячих клавиш
   for k,v in ipairs(helpmess) do
-   love.graphics.print(helpmess[k], tileSize*textx+6, tileSize*k)
+   love.graphics.print(helpmess[k], tileSize*textx+6, tileSize*(k+1))
   end
   
   if xsound==false then
-   love.graphics.print("-NO", tileSize*textx+130, tileSize*4)
+   love.graphics.print("-NO", tileSize*textx+130, tileSize*5)
  else
-   love.graphics.print("-YES", tileSize*textx+130, tileSize*4)
+   love.graphics.print("-YES", tileSize*textx+130, tileSize*5)
   end
 end
 
