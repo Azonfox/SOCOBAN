@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "BOXES"
-#define MyAppVersion "0,1"
+#define MyAppVersion "0,24"
 #define MyAppPublisher "AzGame"
 #define MyAppURL "https://www.azfoxgame.my.cam"
 #define MyAppExeName "boxes.exe"
@@ -26,6 +26,7 @@ OutputBaseFilename=boxsetup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+SetupIconFile=linux.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
