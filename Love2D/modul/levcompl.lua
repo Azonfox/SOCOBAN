@@ -3,7 +3,6 @@ levcompl={}
  function levcompl.load()
  -- картинки
     LevComplPng=love.graphics.newImage("image/levcompl.png")
-    LevCompl_font  = love.graphics.newFont("font/font.ttf", tileSize)  
     compliteflag=false -- флаг окна выигрыша
     xgong=true -- гонг выигрыша звучит один раз
     -- учет пройденных уровней 1-да 0-нет

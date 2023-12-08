@@ -1,7 +1,6 @@
 debugs={}
 
 function debugs.load()
-  Debugs_font  = love.graphics.newFont("font/font.ttf", tileSize/2)  
   xdt=0.02 -- для тестирования задержек
 end
 

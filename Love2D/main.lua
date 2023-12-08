@@ -15,6 +15,10 @@ function love.load()
   prorabflag=true   -- включить прораба в игру
   filesflag=true    -- вкл. файловую систему
   xsound=false       -- откл. звуки  
+  -- Константы
+  gameversion=0.24 --  версия программы
+  tileSize=32    -- размер ячейки и спрайта!
+  --maxlevel находится в файлах массивов уровней
  
   --Include
   if androidflag then require "modul/android" end -- дополнения для запуска на смартфоне
@@ -27,12 +31,9 @@ function love.load()
   --require "modul/testlevels" -- Тестовые уровни
   require "modul/keyevent"   -- Движения игрока
   require "modul/levcompl"   -- Проверка выигрыша и показ
+  require "modul/fonts"      -- ВСЕ шрифты системы
   --Timer=require "lib/hump/timer"   -- Чужая Библиотека таймера
   
-  -- Константы
-  gameversion=0.23 --  версия программы
-  tileSize=32    -- размер ячейки и спрайта!
-  --maxlevel находится в файлах массивов уровней
   -- Таблицы
   gamepad={} -- игровой уровень 19х16
   TileQ={}  -- Вырезенные спрайты 
@@ -47,6 +48,8 @@ function love.load()
   kmen=0    -- направление игрока вниз
   rkmen=0   -- не толкающий игрок 
   
+  love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
+  
   if androidflag then android.load() end
   if debudsflag  then debugs.load()  end
   if prorabflag  then prorab.load()  end
@@ -54,18 +57,12 @@ function love.load()
   if pcflag      then pc.load()      end
   levcompl.load()
   
-  love.graphics.setDefaultFilter("nearest") -- сглаживаем пиксели
-  
-  -- Звуки
+    -- Звуки
   Mstep=love.audio.newSource("sound/step.ogg","static")
   Mwall=love.audio.newSource("sound/wall.ogg","static")
   Mbox=love.audio.newSource("sound/box.ogg","static")
   Lgong=love.audio.newSource("sound/gong.ogg","static")
-  -- Шрифт
-  status_font = love.graphics.newFont("font/font.ttf", tileSize/4*3 )  
-  Level_font  = love.graphics.newFont("font/font.ttf", tileSize)  
-  time_font   = love.graphics.newFont("font/freemonobold.ttf", tileSize/5*3)  
-  Name_font   = love.graphics.newFont("font/freemonobold.ttf", tileSize)
+  
   -- Картинки
   TileSetPng=love.graphics.newImage("image/tileset3.png")
   --TileSetPng:setFilter("nearest","linear") -- см выше love.graphics.setDefaultFilter
@@ -249,28 +246,25 @@ function love.draw()
   love.graphics.rectangle("line",tileSize*19+4, tileSize*0+5,
       tileSize*6-7,tileSize*2-3,10,10)     
     -- Печать системного времени    
-  love.graphics.setColor(0,255,0,255)
+  love.graphics.setColor(25,25,50,255)
   love.graphics.setFont(time_font)
-  love.graphics.print(os_time,tileSize*23, tileSize*0+23)
+  love.graphics.print(os_time,tileSize*23+8, tileSize*1-9)
   -- печать названия игры  
   love.graphics.setFont( Name_font )
   love.graphics.setColor(200,200,0,255)
-  love.graphics.print("BOXES", tileSize*19+10, tileSize*0+20)
+  love.graphics.print("BOXES", tileSize*19+12, tileSize*0+21)
   -- Печать версии    
   love.graphics.setColor(25,25,50,255)
   love.graphics.setFont(time_font)
-  love.graphics.print("v "..gameversion,tileSize*19+10, tileSize*1+14)
+  love.graphics.print("v "..gameversion,tileSize*19+14, tileSize*1+14)
     -- Печать автора    
   love.graphics.setColor(25,25,50,255)
   love.graphics.setFont(time_font)
-  love.graphics.print("AzfoxGame",tileSize*19+10, tileSize*0+5)
-
-  
-  -- ПЕЧАТЬ СТАТИСТИКИ
+  love.graphics.print("AzfoxGame",tileSize*19+10, tileSize*0+7)
   -- Печать сайта    
   love.graphics.setColor(25,25,50,255)
   love.graphics.setFont(time_font)
-  love.graphics.print("AzfoxGame.my.cam",tileSize*19+5, tileSize*13+10)
+  love.graphics.print("AzfoxGame.my.cam",tileSize*19+1, tileSize*13+10)
   -- подкладываем фон с рамкой под информацию
   love.graphics.setColor(100,0,0,150) 
   love.graphics.rectangle("fill",tileSize*19+4, tileSize*14,
@@ -282,11 +276,11 @@ function love.draw()
     -- Печать счетчика шагов
   love.graphics.setFont( status_font )
   love.graphics.setColor(150,150,0,255) 
-  love.graphics.print(countstep, tileSize*20+0, tileSize*14+4)
+  love.graphics.print(countstep, tileSize*20, tileSize*14+4)
   -- Печать номера уровня 
   love.graphics.setFont( Level_font )
-  love.graphics.setColor(200,200,00,255) 
-  love.graphics.print("Level  "..mygamelevel, tileSize*19+10, tileSize*15-6)
+  love.graphics.setColor(200,200,0,255) 
+  love.graphics.print("LEVEL   "..mygamelevel, tileSize*19+10, tileSize*15-7)
   
   -- Печать SHOW из модулей, если они включены
   -- Внимание на порядок следования - зависят цвета при выигрыше

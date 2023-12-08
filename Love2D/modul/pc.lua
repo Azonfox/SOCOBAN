@@ -3,7 +3,6 @@ pc={}
 
 function pc.load()
     xscreen=true -- full screen
-    Help_font  = love.graphics.newFont("font/font.ttf", tileSize/4*3) 
     xrighmenu=6 -- размер меню в клетках справа от игрового поля для ПК
     helpmess={
     "",
