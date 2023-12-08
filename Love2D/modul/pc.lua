@@ -20,9 +20,66 @@ function pc.update(dt)
 end
 
 function pc.show()
+  -- заливаем фон под меню
+  --при выигрыше меняем цвет
+  if compliteflag then love.graphics.setColor(0,0,255,0) 
+    else love.graphics.setColor(255,255,255,255) end
+  for myi=0,  love.graphics.getHeight()/tileSize/myscale do
+    for mxi=19,love.graphics.getWidth()/tileSize/myscale do 
+     love.graphics.draw(TileSetPng,TileQ[22],(mxi)*tileSize,(myi)*tileSize)
+    end
+  end
+    -- ПЕЧАТЬ ДАННЫХ ИГРЫ
+  -- подкладываем фон с рамкой под text
+  love.graphics.setColor(100,0,0,150) 
+  love.graphics.rectangle("fill",tileSize*19+4, tileSize*0+5,
+      tileSize*6-7,tileSize*2-3,10,10)     
+  love.graphics.setColor(0,0,0,255) 
+  love.graphics.setLineWidth( 3 )    -- толщина линии
+  love.graphics.rectangle("line",tileSize*19+4, tileSize*0+5,
+      tileSize*6-7,tileSize*2-3,10,10)     
+    -- Печать системного времени    
+  love.graphics.setColor(25,25,50,255)
+  love.graphics.setFont(time_font)
+  love.graphics.print(os_time,tileSize*23+8, tileSize*1-9)
+  -- печать названия игры  
+  love.graphics.setFont( Name_font )
+  love.graphics.setColor(200,200,0,255)
+  love.graphics.print("BOXES", tileSize*19+12, tileSize*0+21)
+  -- Печать версии    
+  love.graphics.setColor(25,25,50,255)
+  love.graphics.setFont(time_font)
+  love.graphics.print("v "..gameversion,tileSize*19+14, tileSize*1+14)
+    -- Печать автора    
+  love.graphics.setColor(25,25,50,255)
+  love.graphics.setFont(time_font)
+  love.graphics.print("AzfoxGame",tileSize*19+10, tileSize*0+7)
+  -- Печать сайта    
+  love.graphics.setColor(25,25,50,255)
+  love.graphics.setFont(time_font)
+  love.graphics.print("AzfoxGame.my.cam",tileSize*19+1, tileSize*13+10)
+  -- подкладываем фон с рамкой под информацию
+  love.graphics.setColor(100,0,0,150) 
+  love.graphics.rectangle("fill",tileSize*19+4, tileSize*14,
+      tileSize*6-7,tileSize*2-5,10,10)     
+  love.graphics.setColor(0,0,0,255) 
+  love.graphics.setLineWidth( 3 )    -- толщина линии
+  love.graphics.rectangle("line",tileSize*19+4, tileSize*14,
+      tileSize*6-7,tileSize*2-5,10,10)     
+    -- Печать счетчика шагов
+  love.graphics.setFont( status_font )
+  love.graphics.setColor(150,150,0,255) 
+  love.graphics.print(countstep, tileSize*20, tileSize*14+4)
+  -- Печать номера уровня 
+  love.graphics.setFont( Level_font )
+  love.graphics.setColor(200,200,0,255) 
+  love.graphics.print("LEVEL   "..mygamelevel, tileSize*19+10, tileSize*15-7)
+
   -- Печать справки по клавишам
   local textx=19
-  love.graphics.setColor(25,25,50,255)
+  --при выигрыше не показываем справку...
+  if compliteflag then love.graphics.setColor(0,0,0,0) 
+    else love.graphics.setColor(25,25,50,255) end
   love.graphics.setFont( Help_font )
   -- печать горячих клавиш
   for k,v in ipairs(helpmess) do

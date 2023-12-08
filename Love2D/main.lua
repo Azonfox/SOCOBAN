@@ -27,8 +27,8 @@ function love.load()
   if prorabflag  then require "modul/prorab"  end -- учетчик-контроллер прораб :)
   if filesflag   then require "modul/files"   end -- Файлы
   if menuflag    then require "modul/menu"    end -- Меню
-  require "modul/levels"  -- Все рабочие уровни
-  --require "modul/testlevels" -- Тестовые уровни
+  --require "modul/levels"  -- Все рабочие уровни
+  require "modul/testlevels" -- Тестовые уровни
   require "modul/keyevent"   -- Движения игрока
   require "modul/levcompl"   -- Проверка выигрыша и показ
   require "modul/fonts"      -- ВСЕ шрифты системы
@@ -199,16 +199,10 @@ function love.draw()
 
   -- Заливаем фон под игровым полем
   for myi=0, love.graphics.getHeight()/tileSize/myscale do
-     for mxi=-1,love.graphics.getWidth()/tileSize/myscale do 
+    for mxi=-1,love.graphics.getWidth()/tileSize/myscale do 
         love.graphics.draw(TileSetPng,TileQ[21],(mxi)*tileSize,(myi)*tileSize)
     end
   end  
-    -- и заливаем фон под меню
-  for myi=0,  love.graphics.getHeight()/tileSize/myscale do
-    for mxi=19,love.graphics.getWidth()/tileSize/myscale do 
-     love.graphics.draw(TileSetPng,TileQ[22],(mxi)*tileSize,(myi)*tileSize)
-    end
-  end
   --
   -- постоянное формирование игрового поля
   for myi=1, 16 do
@@ -231,56 +225,6 @@ function love.draw()
    end
   end
   
-  -- ПЕЧАТЬ ДАННЫХ ИГРЫ
-  --[[ подкладываем фон с рамкой под текст
-  love.graphics.setColor(100,0,0,255) 
-  love.graphics.rectangle("fill",tileSize*19+4, tileSize*0+10,
-      tileSize*6-7,tileSize*1-15,10,10)     
-  --]]
-  -- подкладываем фон с рамкой под text
-  love.graphics.setColor(100,0,0,150) 
-  love.graphics.rectangle("fill",tileSize*19+4, tileSize*0+5,
-      tileSize*6-7,tileSize*2-3,10,10)     
-  love.graphics.setColor(0,0,0,255) 
-  love.graphics.setLineWidth( 3 )    -- толщина линии
-  love.graphics.rectangle("line",tileSize*19+4, tileSize*0+5,
-      tileSize*6-7,tileSize*2-3,10,10)     
-    -- Печать системного времени    
-  love.graphics.setColor(25,25,50,255)
-  love.graphics.setFont(time_font)
-  love.graphics.print(os_time,tileSize*23+8, tileSize*1-9)
-  -- печать названия игры  
-  love.graphics.setFont( Name_font )
-  love.graphics.setColor(200,200,0,255)
-  love.graphics.print("BOXES", tileSize*19+12, tileSize*0+21)
-  -- Печать версии    
-  love.graphics.setColor(25,25,50,255)
-  love.graphics.setFont(time_font)
-  love.graphics.print("v "..gameversion,tileSize*19+14, tileSize*1+14)
-    -- Печать автора    
-  love.graphics.setColor(25,25,50,255)
-  love.graphics.setFont(time_font)
-  love.graphics.print("AzfoxGame",tileSize*19+10, tileSize*0+7)
-  -- Печать сайта    
-  love.graphics.setColor(25,25,50,255)
-  love.graphics.setFont(time_font)
-  love.graphics.print("AzfoxGame.my.cam",tileSize*19+1, tileSize*13+10)
-  -- подкладываем фон с рамкой под информацию
-  love.graphics.setColor(100,0,0,150) 
-  love.graphics.rectangle("fill",tileSize*19+4, tileSize*14,
-      tileSize*6-7,tileSize*2-5,10,10)     
-  love.graphics.setColor(0,0,0,255) 
-  love.graphics.setLineWidth( 3 )    -- толщина линии
-  love.graphics.rectangle("line",tileSize*19+4, tileSize*14,
-      tileSize*6-7,tileSize*2-5,10,10)     
-    -- Печать счетчика шагов
-  love.graphics.setFont( status_font )
-  love.graphics.setColor(150,150,0,255) 
-  love.graphics.print(countstep, tileSize*20, tileSize*14+4)
-  -- Печать номера уровня 
-  love.graphics.setFont( Level_font )
-  love.graphics.setColor(200,200,0,255) 
-  love.graphics.print("LEVEL   "..mygamelevel, tileSize*19+10, tileSize*15-7)
   
   -- Печать SHOW из модулей, если они включены
   -- Внимание на порядок следования - зависят цвета при выигрыше
